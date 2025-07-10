@@ -8,6 +8,7 @@ import { youtubeSearch } from "@/ai/flows/youtube-search";
 import { lyricSearch } from "@/ai/flows/lyric-search";
 import { generateCoverImage } from "@/ai/flows/cover-image-flow";
 import type { Song } from "@/types";
+import { getYoutubeThumbnailUrl } from "@/lib/youtube";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -103,6 +104,8 @@ export function SongForm({ onSongAdded }: SongFormProps) {
       } else if (coverImageResult) {
         photoUrl = coverImageResult.imageUrl;
       }
+      
+      const thumbnailUrl = getYoutubeThumbnailUrl(searchResult.youtubeUrl) ?? undefined;
 
       const newSong: Song = {
         id: crypto.randomUUID(),
@@ -112,6 +115,7 @@ export function SongForm({ onSongAdded }: SongFormProps) {
         date: values.date.toISOString(),
         youtubeUrl: searchResult.youtubeUrl,
         photoUrl: photoUrl,
+        thumbnailUrl: thumbnailUrl,
         lyrics: lyricResult?.lyrics,
         start: values.start,
       };

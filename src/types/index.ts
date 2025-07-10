@@ -6,6 +6,7 @@ export type Song = {
   message?: string;
   youtubeUrl: string;
   photoUrl?: string;
+  thumbnailUrl?: string;
   lyrics?: string;
   start?: string;
 };

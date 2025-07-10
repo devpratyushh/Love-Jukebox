@@ -71,8 +71,10 @@ export function YoutubePlaylist({ songs }: { songs: Song[] }) {
                         currentSong?.id === song.id ? "bg-primary/20 text-primary-foreground" : "hover:bg-primary/10"
                     )}
                   >
-                    <div className="w-12 h-12 bg-muted rounded-md shrink-0 flex items-center justify-center">
-                        {song.photoUrl ? (
+                    <div className="w-12 h-12 bg-muted rounded-md shrink-0 flex items-center justify-center relative">
+                        {song.thumbnailUrl ? (
+                            <Image src={song.thumbnailUrl} alt={song.title} width={48} height={48} className="w-full h-full object-cover rounded-md" />
+                        ) : song.photoUrl ? (
                             <Image src={song.photoUrl} alt={song.title} width={48} height={48} className="w-full h-full object-cover rounded-md" />
                         ) : (
                             <Music2 className="w-6 h-6 text-muted-foreground" />

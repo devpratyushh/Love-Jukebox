@@ -19,6 +19,12 @@ export function getYoutubeVideoId(url: string): string | null {
   return videoId ? videoId.replace(/[^a-zA-Z0-9_-]/g, '') : null;
 }
 
+export function getYoutubeThumbnailUrl(url: string): string | null {
+    const videoId = getYoutubeVideoId(url);
+    if (!videoId) return null;
+    return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+}
+
 function timeToSeconds(time: string): number {
   if (!time || !/^\d{1,2}:\d{2}$/.test(time)) {
     return 0;

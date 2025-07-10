@@ -1,9 +1,18 @@
 
 import type { Song } from "@/types";
+import { getYoutubeThumbnailUrl } from "./youtube";
 
-export const initialSongs: Song[] = [
+const songsWithThumbnails = (songs: Omit<Song, 'id' | 'thumbnailUrl'>[]): Song[] => {
+    return songs.map((song, index) => ({
+        ...song,
+        id: `${index + 1}`,
+        thumbnailUrl: getYoutubeThumbnailUrl(song.youtubeUrl) ?? undefined,
+    }));
+}
+
+
+export const initialSongs: Song[] = songsWithThumbnails([
   {
-    id: "1",
     title: "Perfect",
     artist: "Ed Sheeran",
     date: "2023-10-26T00:00:00.000Z",
@@ -17,7 +26,6 @@ Oh, I never knew you were the someone waiting for me`,
     start: "0:55",
   },
   {
-    id: "2",
     title: "All of Me",
     artist: "John Legend",
     date: "2023-10-27T00:00:00.000Z",
@@ -31,7 +39,6 @@ All your perfect imperfections`,
     start: "1:05",
   },
   {
-    id: "3",
     title: "A Thousand Years",
     artist: "Christina Perri",
     date: "2023-10-27T00:00:00.000Z",
@@ -43,4 +50,4 @@ I have loved you for a thousand years
 I'll love you for a thousand more`,
     start: "1:25"
   }
-];
+]);
