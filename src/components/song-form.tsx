@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { youtubeSearch } from "@/ai/flows/youtube-search";
+import { lyricSearch } from "@/ai/flows/lyric-search";
 import type { Song } from "@/types";
 
 import { Button } from "@/components/ui/button";
@@ -70,10 +71,17 @@ export function SongForm({ onSongAdded }: SongFormProps) {
   async function onSubmit(values: SongFormValues) {
     setIsLoading(true);
     try {
-      const searchResult = await youtubeSearch({
-        title: values.title,
-        artist: values.artist,
-      });
+      const [searchResult, lyricResult] = await Promise.all([
+         youtubeSearch({
+          title: values.title,
+          artist: values.artist,
+        }),
+        lyricSearch({
+          title: values.title,
+          artist: values.artist,
+        })
+      ]);
+
 
       if (!searchResult || !searchResult.isAccurate || !searchResult.youtubeUrl) {
         throw new Error("Could not find an accurate match on YouTube.");
@@ -81,8 +89,6 @@ export function SongForm({ onSongAdded }: SongFormProps) {
 
       let photoUrl: string | undefined = undefined;
       if (values.photo) {
-        // In a real app, you'd upload the file and get a URL.
-        // For this prototype, we'll use the base64 data URL directly.
         photoUrl = photoPreview!; 
       }
 
@@ -94,7 +100,7 @@ export function SongForm({ onSongAdded }: SongFormProps) {
         date: values.date.toISOString(),
         youtubeUrl: searchResult.youtubeUrl,
         photoUrl: photoUrl,
-        lyrics: "Synced lyrics showing here...", // Placeholder
+        lyrics: lyricResult?.lyrics,
       };
 
       onSongAdded(newSong);
