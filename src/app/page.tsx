@@ -91,7 +91,7 @@ export default function Home() {
           </header>
         </div>
         
-        <div className="flex-1 container mx-auto px-4 pb-8 grid grid-cols-1 lg:grid-cols-6 lg:gap-8">
+        <div className="flex-1 container mx-auto px-4 pb-8 grid grid-cols-1 lg:grid-cols-6 lg:gap-8 min-h-0">
           <section className="lg:col-span-4 flex flex-col min-h-0">
              <SongTimeline 
                 songs={sortedTimelineSongs} 
@@ -124,7 +124,7 @@ export default function Home() {
               <span className="sr-only">Open Playlist</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="right" className="w-full sm:max-w-md p-0">
+          <SheetContent side="bottom" className="w-full h-[80vh] p-0">
              <YoutubePlaylist 
                 favoriteSongs={favoriteSongs}
                 otherSongs={nonFavoriteSongs}
