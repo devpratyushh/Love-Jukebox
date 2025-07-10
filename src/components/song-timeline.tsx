@@ -18,7 +18,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Heart, Calendar } from "lucide-react";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { format, parseISO } from 'date-fns';
 
 
@@ -31,6 +31,11 @@ interface SongTimelineProps {
 }
 
 export function SongTimeline({ songs, sortOrder, setSortOrder }: SongTimelineProps) {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const groupedAndSortedSongs = React.useMemo(() => {
     // Group songs by date
@@ -69,7 +74,7 @@ export function SongTimeline({ songs, sortOrder, setSortOrder }: SongTimelinePro
     <div className="w-full h-full flex flex-col">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-4 bg-muted/80 backdrop-blur-sm z-10 shrink-0">
         <h2 className="text-3xl font-headline font-bold text-primary">Our Mixtape</h2>
-        {songs.length > 1 && (
+        {isClient && songs.length > 1 && (
           <Select onValueChange={(value) => setSortOrder(value as SortOrder)} defaultValue={sortOrder}>
             <SelectTrigger className="w-full sm:w-[180px]">
               <SelectValue placeholder="Sort by" />
