@@ -44,12 +44,12 @@ export default function Home() {
         </div>
         
         <div className="flex-1 container mx-auto px-4 pb-8 grid grid-cols-1 lg:grid-cols-5 lg:gap-8 overflow-hidden">
-          <section className="lg:col-span-4 flex flex-col overflow-hidden">
+          <section className="lg:col-span-4 flex flex-col overflow-hidden bg-muted/50 rounded-lg p-4">
               <div className="flex-1 overflow-y-auto pr-4 -mr-4">
                  <SongTimeline songs={songs} sortOrder={sortOrder} setSortOrder={setSortOrder} />
               </div>
           </section>
-          <aside className="lg:col-span-1 overflow-y-auto hidden lg:block">
+          <aside className="lg:col-span-1 overflow-y-auto hidden lg:block bg-muted/50 rounded-lg p-4">
               <YoutubePlaylist songs={songs} />
           </aside>
         </div>
