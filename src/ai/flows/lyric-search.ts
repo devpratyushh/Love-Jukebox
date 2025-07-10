@@ -40,7 +40,13 @@ const lyricSearchPrompt = ai.definePrompt({
   Artist: {{{artist}}}
 
   {{#if start}}
-  The user wants the lyrics starting from {{{start}}}{{#if end}} and ending at {{{end}}}{{/if}}. Please return only the lyrics for this specific time range.
+  The user wants the lyrics starting from {{{start}}}{{#if end}} and ending at {{{end}}}{{/if}}. 
+  Please return the lyrics for this specific time range, but also include one line of context before the start time and one line of context after the end time.
+  The final output should be a single block of text with each line separated by a newline. For example:
+  "Line before the snippet
+  Main snippet line 1
+  Main snippet line 2
+  Line after the snippet"
   {{else}}
   Return the full lyrics as a string.
   {{/if}}
