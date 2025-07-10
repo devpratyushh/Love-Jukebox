@@ -93,7 +93,7 @@ export function SongTimeline({ songs, sortOrder, setSortOrder }: SongTimelinePro
                  </div>
                </AccordionTrigger>
                <AccordionContent className="bg-muted/50 rounded-b-lg border border-t-0 p-4">
-                  <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {songs.map((song) => (
                       <SongCard key={song.id} song={song} />
                     ))}

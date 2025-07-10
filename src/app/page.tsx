@@ -41,8 +41,8 @@ export default function Home() {
           </header>
         </div>
         
-        <div className="flex-1 container mx-auto px-4 pb-8 grid grid-cols-1 lg:grid-cols-3 lg:gap-8 overflow-hidden">
-          <section className="lg:col-span-2 flex flex-col overflow-hidden">
+        <div className="flex-1 container mx-auto px-4 pb-8 grid grid-cols-1 lg:grid-cols-5 lg:gap-8 overflow-hidden">
+          <section className="lg:col-span-4 flex flex-col overflow-hidden">
               <div className="flex-1 overflow-y-auto pr-4 -mr-4">
                  <SongTimeline songs={songs} sortOrder={sortOrder} setSortOrder={setSortOrder} />
               </div>
