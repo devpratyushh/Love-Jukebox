@@ -8,7 +8,7 @@ body {
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 340 100% 97%;
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
@@ -20,7 +20,7 @@ body {
     --secondary-foreground: 215.4 16.3% 46.9%;
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
+    --accent: 340 100% 97%;
     --accent-foreground: 215.4 16.3% 46.9%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
@@ -84,5 +84,30 @@ body {
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .heart {
+    animation: fly 10s linear infinite;
+    color: hsl(var(--primary) / 0.5);
+    position: fixed;
+    bottom: -20px;
+    z-index: -1;
+  }
+  
+  @keyframes fly {
+    0% {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+    99% {
+      transform: translateY(-100vh) scale(1.5);
+      opacity: 0;
+    }
+    100% {
+        transform: translateY(-100vh) scale(0);
+        opacity: 0;
+    }
   }
 }

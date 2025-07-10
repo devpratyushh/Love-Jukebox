@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Heart, Music, PlusCircle } from "lucide-react";
 import { YoutubePlaylist } from "@/components/youtube-playlist";
+import { FlyingHearts } from "@/components/flying-hearts";
 
 type SortOrder = "newest-first" | "oldest-first";
 
@@ -25,6 +26,7 @@ export default function Home() {
 
   return (
     <>
+      <FlyingHearts />
       <main className="h-screen max-h-screen bg-background font-body text-foreground flex flex-col overflow-hidden">
         <div className="container mx-auto px-4 pt-8">
           <header className="text-center mb-8">
