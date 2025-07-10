@@ -5,10 +5,14 @@ import type { Song } from "@/types";
 import { getYoutubeEmbedUrl } from "@/lib/youtube";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { MessageSquare, Mic, Youtube, FileText } from "lucide-react";
+import { MessageSquare, FileText } from "lucide-react";
 import Image from "next/image";
 
 const LyricsDisplay = ({ lyrics }: { lyrics: string }) => {
+    if (!lyrics) {
+        return null;
+    }
+
     const lines = lyrics.split('\n').filter(line => line.trim() !== '');
     const lineCount = lines.length;
 
@@ -16,9 +20,8 @@ const LyricsDisplay = ({ lyrics }: { lyrics: string }) => {
         return null;
     }
     
-    // This logic assumes a snippet was requested if there are 3 or more lines (prelude, main, postlude)
-    // and distinguishes it from full lyrics. For styling purposes, we check if it looks like a snippet.
-    const isSnippet = lineCount >= 3 && lineCount <= 10; // Heuristic: short lyrics are likely snippets
+    // This logic distinguishes a snippet by looking for a specific structure (context, main, context).
+    const isSnippet = lines.length > 2 && lines.length <= 10; // Heuristic for snippets
 
     const prelude = isSnippet ? lines.slice(0, 1) : [];
     const mainSnippet = isSnippet ? lines.slice(1, -1) : lines;
@@ -27,9 +30,11 @@ const LyricsDisplay = ({ lyrics }: { lyrics: string }) => {
     const content = (
         <div className="whitespace-pre-wrap text-sm text-muted-foreground">
             {prelude.length > 0 && <p>{prelude.join('\n')}</p>}
-            <p className="text-lg font-bold text-primary my-2">
-                {mainSnippet.join('\n')}
-            </p>
+            <blockquote className="my-2">
+                <p className="text-lg font-bold text-primary">
+                    {mainSnippet.join('\n')}
+                </p>
+            </blockquote>
             {postlude.length > 0 && <p>{postlude.join('\n')}</p>}
         </div>
     );
@@ -44,11 +49,11 @@ const LyricsDisplay = ({ lyrics }: { lyrics: string }) => {
                     </AccordionContent>
                 </AccordionItem>
             </Accordion>
-        )
+        );
     }
 
     return content;
-}
+};
 
 
 export function SongCard({ song }: { song: Song }) {
