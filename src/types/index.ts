@@ -5,4 +5,6 @@ export type Song = {
   date: string;
   message?: string;
   youtubeUrl: string;
+  photoUrl?: string;
+  lyrics?: string;
 };

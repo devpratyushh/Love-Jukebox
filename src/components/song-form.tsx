@@ -24,13 +24,14 @@ import { DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/di
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
-import { CalendarIcon, Loader2, Music, PlusCircle } from "lucide-react";
+import { CalendarIcon, Loader2, Music, PlusCircle, Image as ImageIcon } from "lucide-react";
 
 const formSchema = z.object({
   title: z.string().min(1, "Song title is required."),
   artist: z.string().min(1, "Artist name is required."),
   message: z.string().optional(),
   date: z.date({ required_error: "A date is required." }),
+  photo: z.instanceof(File).optional(),
 });
 
 type SongFormValues = z.infer<typeof formSchema>;
@@ -41,6 +42,7 @@ interface SongFormProps {
 
 export function SongForm({ onSongAdded }: SongFormProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const { toast } = useToast();
 
   const form = useForm<SongFormValues>({
@@ -52,6 +54,18 @@ export function SongForm({ onSongAdded }: SongFormProps) {
       date: new Date(),
     },
   });
+  
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      form.setValue("photo", file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPhotoPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   async function onSubmit(values: SongFormValues) {
     setIsLoading(true);
@@ -65,6 +79,13 @@ export function SongForm({ onSongAdded }: SongFormProps) {
         throw new Error("Could not find an accurate match on YouTube.");
       }
 
+      let photoUrl: string | undefined = undefined;
+      if (values.photo) {
+        // In a real app, you'd upload the file and get a URL.
+        // For this prototype, we'll use the base64 data URL directly.
+        photoUrl = photoPreview!; 
+      }
+
       const newSong: Song = {
         id: crypto.randomUUID(),
         title: values.title,
@@ -72,10 +93,13 @@ export function SongForm({ onSongAdded }: SongFormProps) {
         message: values.message,
         date: values.date.toISOString(),
         youtubeUrl: searchResult.youtubeUrl,
+        photoUrl: photoUrl,
+        lyrics: "Synced lyrics showing here...", // Placeholder
       };
 
       onSongAdded(newSong);
       form.reset();
+      setPhotoPreview(null);
       toast({
         title: "Song Added!",
         description: `${values.title} by ${values.artist} has been added to your jukebox.`,
@@ -111,7 +135,7 @@ export function SongForm({ onSongAdded }: SongFormProps) {
                   <FormItem>
                   <FormLabel>Song Title</FormLabel>
                   <FormControl>
-                      <Input placeholder="e.g., Perfect" {...field} />
+                      <Input placeholder="e.g., Lover" {...field} />
                   </FormControl>
                   <FormMessage />
                   </FormItem>
@@ -124,7 +148,7 @@ export function SongForm({ onSongAdded }: SongFormProps) {
                   <FormItem>
                   <FormLabel>Artist</FormLabel>
                   <FormControl>
-                      <Input placeholder="e.g., Ed Sheeran" {...field} />
+                      <Input placeholder="e.g., Taylor Swift" {...field} />
                   </FormControl>
                   <FormMessage />
                   </FormItem>
@@ -182,7 +206,7 @@ export function SongForm({ onSongAdded }: SongFormProps) {
                 <FormLabel>Your Message (optional)</FormLabel>
                 <FormControl>
                   <Textarea
-                    placeholder="e.g., This song reminds me of our first date..."
+                    placeholder="e.g., You looked like sunshine today"
                     className="resize-y"
                     {...field}
                   />
@@ -191,6 +215,30 @@ export function SongForm({ onSongAdded }: SongFormProps) {
               </FormItem>
             )}
           />
+
+          <FormField
+            control={form.control}
+            name="photo"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Photo (optional)</FormLabel>
+                <FormControl>
+                  <div className="flex items-center gap-4">
+                    <Button type="button" variant="outline" asChild>
+                        <label htmlFor="photo-upload" className="cursor-pointer flex items-center gap-2">
+                           <ImageIcon className="h-4 w-4" />
+                            Upload Image
+                        </label>
+                    </Button>
+                    <Input id="photo-upload" type="file" className="hidden" accept="image/*" onChange={handlePhotoChange} />
+                     {photoPreview && <img src={photoPreview} alt="Preview" className="h-16 w-16 object-cover rounded-md" />}
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
 
           <Button type="submit" disabled={isLoading} className="w-full sm:w-auto">
             {isLoading ? (

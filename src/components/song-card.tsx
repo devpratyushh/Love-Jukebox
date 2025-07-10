@@ -1,54 +1,80 @@
 "use client";
 
 import type { Song } from "@/types";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { getYoutubeEmbedUrl } from "@/lib/youtube";
 import { format, parseISO } from "date-fns";
-import { Calendar, MessageSquare, Music } from "lucide-react";
+import { Calendar, MessageSquare, Music, Youtube, Mic, Camera, FileText } from "lucide-react";
+import { Separator } from "./ui/separator";
+import Image from "next/image";
 
 export function SongCard({ song }: { song: Song }) {
   const embedUrl = getYoutubeEmbedUrl(song.youtubeUrl);
 
   return (
-    <Card className="flex flex-col overflow-hidden shadow-lg transition-transform duration-300 ease-in-out hover:-translate-y-1 hover:shadow-2xl">
-      {embedUrl && (
-        <div className="aspect-video w-full">
-          <iframe
-            width="100%"
-            height="100%"
-            src={embedUrl}
-            title={`YouTube video player for ${song.title}`}
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          ></iframe>
-        </div>
-      )}
-      <CardHeader>
-        <CardTitle className="font-headline text-2xl tracking-tight text-primary">{song.title}</CardTitle>
-        <CardDescription className="flex items-center gap-2 text-foreground/80">
-          <Music className="h-4 w-4" />
-          {song.artist}
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="flex-grow space-y-4">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Calendar className="h-4 w-4" />
-          <time dateTime={song.date}>{format(parseISO(song.date), "MMMM d, yyyy")}</time>
-        </div>
-        {song.message && (
-          <div className="flex items-start gap-2 text-sm">
-            <MessageSquare className="h-4 w-4 mt-1 shrink-0 text-accent-foreground/80" />
-            <p className="italic text-foreground/90 whitespace-pre-wrap">{song.message}</p>
+    <div className="bg-card text-card-foreground rounded-lg border shadow-sm p-6 space-y-4">
+      <div className="flex items-center gap-3 text-lg font-medium">
+        <Calendar className="h-5 w-5 text-muted-foreground" />
+        <time dateTime={song.date}>{format(parseISO(song.date), "dd MMMM yyyy")}</time>
+      </div>
+      <Separator />
+
+      <div className="flex items-center gap-3">
+        <Music className="h-5 w-5 text-muted-foreground" />
+        <span>
+          Song {song.id.substring(0, 1)}: <i>{song.title} by {song.artist}</i>
+        </span>
+      </div>
+      <Separator />
+
+      {song.message && (
+        <>
+          <div className="flex items-start gap-3">
+            <FileText className="h-5 w-5 text-muted-foreground mt-1" />
+            <p className="italic">"{song.message}"</p>
           </div>
-        )}
-      </CardContent>
-    </Card>
+          <Separator />
+        </>
+      )}
+
+      {song.photoUrl && (
+        <>
+        <div className="flex items-start gap-3">
+            <Camera className="h-5 w-5 text-muted-foreground" />
+            <div className="relative w-full aspect-video rounded-md overflow-hidden">
+                <Image
+                    src={song.photoUrl}
+                    alt={song.title}
+                    layout="fill"
+                    objectFit="cover"
+                    data-ai-hint="song lovers"
+                />
+            </div>
+        </div>
+        <Separator />
+        </>
+      )}
+
+      {embedUrl && (
+          <>
+            <div className="flex items-center gap-3">
+                <Youtube className="h-5 w-5 text-muted-foreground" />
+                <a href={song.youtubeUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                    [YouTube Link]
+                </a>
+            </div>
+            <Separator/>
+          </>
+      )}
+
+      {song.lyrics && (
+        <>
+            <div className="flex items-start gap-3">
+                <Mic className="h-5 w-5 text-muted-foreground mt-1" />
+                <p className="whitespace-pre-wrap">{song.lyrics}</p>
+            </div>
+            <Separator />
+        </>
+      )}
+    </div>
   );
 }
