@@ -19,7 +19,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Heart, Calendar } from "lucide-react";
+import { Heart, Calendar, ChevronDown } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { format, parseISO } from 'date-fns';
 import { cn } from "@/lib/utils";
@@ -113,17 +113,17 @@ export function SongTimeline({ songs, sortOrder, setSortOrder, timelineFilter, s
               const allFavorited = songs.every(s => s.isFavorite);
               return (
                 <AccordionItem key={date} value={date} className="border-b-0">
-                  <div className="sticky top-0 z-10 flex items-center bg-card text-card-foreground rounded-lg border shadow-sm data-[state=open]:rounded-b-none pr-2">
-                    <AccordionTrigger className="flex-1 px-6 py-4 hover:no-underline">
+                  <div className="sticky top-0 z-10 flex items-center bg-card text-card-foreground rounded-lg border shadow-sm data-[state=open]:rounded-b-none">
+                     <div className="flex-1 px-6 py-4">
                       <div className="flex items-center gap-3 text-lg font-medium">
                           <Calendar className="h-5 w-5 text-muted-foreground" />
                           <time dateTime={date}>{format(parseISO(date), "dd MMMM yyyy")}</time>
                       </div>
-                    </AccordionTrigger>
+                    </div>
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="rounded-full w-8 h-8 shrink-0"
+                      className="rounded-full w-8 h-8 shrink-0 mr-2"
                       onClick={(e) => {
                         e.stopPropagation(); // prevent accordion from toggling
                         onToggleDateFavorite(date, !allFavorited);
@@ -132,6 +132,9 @@ export function SongTimeline({ songs, sortOrder, setSortOrder, timelineFilter, s
                       <Heart className={cn("w-5 h-5", allFavorited ? "text-primary fill-current" : "text-muted-foreground/50")} />
                       <span className="sr-only">Favorite this date</span>
                     </Button>
+                     <AccordionTrigger className="p-2 hover:bg-accent/50 rounded-md">
+                        <ChevronDown className="h-5 w-5 shrink-0 transition-transform duration-200" />
+                     </AccordionTrigger>
                   </div>
                   <AccordionContent className="bg-muted/50 rounded-b-lg border border-t-0 p-4">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
