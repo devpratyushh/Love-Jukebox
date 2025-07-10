@@ -98,26 +98,26 @@ export function SongTimeline({ songs, sortOrder, setSortOrder, onDeleteSong, onT
               const allFavorited = songs.every(s => s.isFavorite);
               return (
                 <AccordionItem key={date} value={date} className="border-b-0">
-                  <AccordionTrigger className="sticky top-0 z-10 bg-card text-card-foreground rounded-lg border shadow-sm px-6 py-4 hover:no-underline data-[state=open]:rounded-b-none">
-                    <div className="flex items-center justify-between w-full">
+                  <div className="sticky top-0 z-10 flex items-center bg-card text-card-foreground rounded-lg border shadow-sm data-[state=open]:rounded-b-none pr-4">
+                    <AccordionTrigger className="flex-1 px-6 py-4 hover:no-underline">
                       <div className="flex items-center gap-3 text-lg font-medium">
                           <Calendar className="h-5 w-5 text-muted-foreground" />
                           <time dateTime={date}>{format(parseISO(date), "dd MMMM yyyy")}</time>
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="rounded-full w-8 h-8 -mr-2"
-                        onClick={(e) => {
-                          e.stopPropagation(); // prevent accordion from toggling
-                          onToggleDateFavorite(date, !allFavorited);
-                        }}
-                      >
-                        <Heart className={cn("w-5 h-5", allFavorited ? "text-primary fill-current" : "text-muted-foreground/50")} />
-                        <span className="sr-only">Favorite this date</span>
-                      </Button>
-                    </div>
-                  </AccordionTrigger>
+                    </AccordionTrigger>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="rounded-full w-8 h-8 shrink-0"
+                      onClick={(e) => {
+                        e.stopPropagation(); // prevent accordion from toggling
+                        onToggleDateFavorite(date, !allFavorited);
+                      }}
+                    >
+                      <Heart className={cn("w-5 h-5", allFavorited ? "text-primary fill-current" : "text-muted-foreground/50")} />
+                      <span className="sr-only">Favorite this date</span>
+                    </Button>
+                  </div>
                   <AccordionContent className="bg-muted/50 rounded-b-lg border border-t-0 p-4">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {songs.map((song) => (
