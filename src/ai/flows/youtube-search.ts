@@ -18,7 +18,7 @@ const YoutubeSearchInputSchema = z.object({
 export type YoutubeSearchInput = z.infer<typeof YoutubeSearchInputSchema>;
 
 const YoutubeSearchOutputSchema = z.object({
-  youtubeUrl: z.string().url().describe('The URL of the song on YouTube.'),
+  youtubeUrl: z.string().describe('The URL of the song on YouTube.'),
   isAccurate: z.boolean().describe('Whether the YouTube result is accurate for the given song and artist.'),
 });
 export type YoutubeSearchOutput = z.infer<typeof YoutubeSearchOutputSchema>;
