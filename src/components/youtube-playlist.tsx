@@ -14,8 +14,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { Music2, Youtube, Heart } from "lucide-react";
+import { Music2, Youtube, Heart, Star } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import type { PlaylistSortOrder } from "@/app/page";
 
@@ -46,30 +47,88 @@ const YoutubePlayer = ({ song }: { song: Song | null }) => {
   );
 };
 
+const SongItem = ({ song, currentSong, onSelectSong, onToggleFavorite }: {
+    song: Song;
+    currentSong: Song | null;
+    onSelectSong: (song: Song) => void;
+    onToggleFavorite: (id: string) => void;
+}) => (
+    <div key={song.id} className="group flex items-center gap-2">
+      <button
+          onClick={() => onSelectSong(song)}
+          className={cn(
+              "flex-1 text-left p-2 rounded-md flex items-center gap-4 transition-colors",
+              currentSong?.id === song.id ? "bg-primary/20" : "hover:bg-primary/10"
+          )}
+      >
+          <div className="w-12 h-12 bg-muted rounded-md shrink-0 flex items-center justify-center relative">
+              {song.thumbnailUrl ? (
+                  <Image src={song.thumbnailUrl} alt={song.title} width={48} height={48} className="w-full h-full object-cover rounded-md" />
+              ) : song.photoUrl ? (
+                  <Image src={song.photoUrl} alt={song.title} width={48} height={48} className="w-full h-full object-cover rounded-md" />
+              ) : (
+                  <Music2 className="w-6 h-6 text-muted-foreground" />
+              )}
+          </div>
+          <div className="flex-1 overflow-hidden">
+              <p className="font-semibold truncate text-foreground">{song.title}</p>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground truncate">
+                <p className="truncate">{song.artist}</p>
+                <span className="text-muted-foreground/80">&middot;</span>
+                <p className="text-xs text-muted-foreground/80 truncate shrink-0">{format(parseISO(song.date), "MMM d, yyyy")}</p>
+              </div>
+          </div>
+      </button>
+      <Button 
+          variant="ghost" 
+          size="icon"
+          className="rounded-full w-8 h-8"
+          onClick={(e) => {
+              e.stopPropagation();
+              onToggleFavorite(song.id);
+          }}
+      >
+          <Heart className={cn("w-4 h-4", song.isFavorite ? "text-primary fill-current" : "text-muted-foreground")} />
+          <span className="sr-only">Toggle Favorite</span>
+      </Button>
+  </div>
+);
+
+
 interface YoutubePlaylistProps {
-    songs: Song[];
+    favoriteSongs: Song[];
+    otherSongs: Song[];
     sortOrder: PlaylistSortOrder;
     setSortOrder: Dispatch<SetStateAction<PlaylistSortOrder>>;
     onToggleFavorite: (id: string) => void;
 }
 
-export function YoutubePlaylist({ songs, sortOrder, setSortOrder, onToggleFavorite }: YoutubePlaylistProps) {
+export function YoutubePlaylist({ favoriteSongs, otherSongs, sortOrder, setSortOrder, onToggleFavorite }: YoutubePlaylistProps) {
   const [currentSong, setCurrentSong] = useState<Song | null>(null);
+  const allSongs = [...favoriteSongs, ...otherSongs];
 
   useEffect(() => {
     // Set the first song as current when the component loads or songs change
-    if (songs.length > 0 && !currentSong) {
-      setCurrentSong(songs[0]);
+    if (allSongs.length > 0 && !currentSong) {
+      setCurrentSong(allSongs[0]);
     }
     // If the current song is no longer in the list, clear it
-    if (currentSong && !songs.find(s => s.id === currentSong.id)) {
-        setCurrentSong(songs[0] || null);
+    if (currentSong && !allSongs.find(s => s.id === currentSong.id)) {
+        setCurrentSong(allSongs[0] || null);
     }
-  }, [songs, currentSong]);
+  }, [allSongs, currentSong]);
 
 
-  if (songs.length === 0) {
-    return null;
+  if (allSongs.length === 0) {
+    return (
+        <div className="flex flex-col h-full bg-muted/50 rounded-lg p-4 items-center justify-center">
+             <div className="text-center text-muted-foreground">
+                <Music2 className="mx-auto h-12 w-12" />
+                <p className="mt-2">Your playlist is empty.</p>
+                <p className="text-sm">Add a song to get started!</p>
+            </div>
+        </div>
+    );
   }
 
   return (
@@ -81,7 +140,6 @@ export function YoutubePlaylist({ songs, sortOrder, setSortOrder, onToggleFavori
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="favorites-first">Favorites</SelectItem>
             <SelectItem value="newest-first">Newest First</SelectItem>
             <SelectItem value="oldest-first">Oldest First</SelectItem>
             <SelectItem value="title-az">Title (A-Z)</SelectItem>
@@ -96,46 +154,21 @@ export function YoutubePlaylist({ songs, sortOrder, setSortOrder, onToggleFavori
       <div className="flex-1 min-h-0">
           <ScrollArea className="h-full pr-4 -mr-4">
             <div className="space-y-2">
-              {songs.map((song) => (
-                  <div key={song.id} className="group flex items-center gap-2">
-                    <button
-                        onClick={() => setCurrentSong(song)}
-                        className={cn(
-                            "flex-1 text-left p-2 rounded-md flex items-center gap-4 transition-colors",
-                            currentSong?.id === song.id ? "bg-primary/20" : "hover:bg-primary/10"
-                        )}
-                    >
-                        <div className="w-12 h-12 bg-muted rounded-md shrink-0 flex items-center justify-center relative">
-                            {song.thumbnailUrl ? (
-                                <Image src={song.thumbnailUrl} alt={song.title} width={48} height={48} className="w-full h-full object-cover rounded-md" />
-                            ) : song.photoUrl ? (
-                                <Image src={song.photoUrl} alt={song.title} width={48} height={48} className="w-full h-full object-cover rounded-md" />
-                            ) : (
-                                <Music2 className="w-6 h-6 text-muted-foreground" />
-                            )}
+                {favoriteSongs.length > 0 && (
+                    <>
+                        <div className="flex items-center gap-2 px-2 pt-2">
+                           <Star className="h-4 w-4 text-amber-400 fill-current" />
+                           <h3 className="text-sm font-semibold text-muted-foreground">Favorites</h3>
                         </div>
-                        <div className="flex-1 overflow-hidden">
-                            <p className="font-semibold truncate text-foreground">{song.title}</p>
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground truncate">
-                              <p className="truncate">{song.artist}</p>
-                              <span className="text-muted-foreground/80">&middot;</span>
-                              <p className="text-xs text-muted-foreground/80 truncate shrink-0">{format(parseISO(song.date), "MMM d, yyyy")}</p>
-                            </div>
-                        </div>
-                    </button>
-                    <Button 
-                        variant="ghost" 
-                        size="icon"
-                        className="rounded-full w-8 h-8"
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            onToggleFavorite(song.id);
-                        }}
-                    >
-                        <Heart className={cn("w-4 h-4", song.isFavorite ? "text-primary fill-current" : "text-muted-foreground")} />
-                        <span className="sr-only">Toggle Favorite</span>
-                    </Button>
-                </div>
+                        {favoriteSongs.map((song) => (
+                           <SongItem key={`fav-${song.id}`} song={song} currentSong={currentSong} onSelectSong={setCurrentSong} onToggleFavorite={onToggleFavorite} />
+                        ))}
+                       {otherSongs.length > 0 && <Separator className="my-4" />}
+                    </>
+                )}
+
+              {otherSongs.map((song) => (
+                 <SongItem key={song.id} song={song} currentSong={currentSong} onSelectSong={setCurrentSong} onToggleFavorite={onToggleFavorite} />
               ))}
             </div>
           </ScrollArea>
