@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { youtubeSearch } from "@/ai/flows/youtube-search";
 import { lyricSearch } from "@/ai/flows/lyric-search";
+import { generateCoverImage } from "@/ai/flows/cover-image-flow";
 import type { Song } from "@/types";
 
 import { Button } from "@/components/ui/button";
@@ -75,7 +76,9 @@ export function SongForm({ onSongAdded }: SongFormProps) {
   async function onSubmit(values: SongFormValues) {
     setIsLoading(true);
     try {
-      const [searchResult, lyricResult] = await Promise.all([
+      let photoUrl: string | undefined = undefined;
+
+      const [searchResult, lyricResult, coverImageResult] = await Promise.all([
          youtubeSearch({
           title: values.title,
           artist: values.artist,
@@ -85,7 +88,9 @@ export function SongForm({ onSongAdded }: SongFormProps) {
           artist: values.artist,
           start: values.start,
           end: values.end,
-        })
+        }),
+        // Generate cover image only if no photo is uploaded
+        !values.photo ? generateCoverImage({ title: values.title, artist: values.artist }) : Promise.resolve(null)
       ]);
 
 
@@ -93,9 +98,10 @@ export function SongForm({ onSongAdded }: SongFormProps) {
         throw new Error(searchResult.reason || "Could not find an accurate match on YouTube.");
       }
 
-      let photoUrl: string | undefined = undefined;
       if (values.photo) {
         photoUrl = photoPreview!; 
+      } else if (coverImageResult) {
+        photoUrl = coverImageResult.imageUrl;
       }
 
       const newSong: Song = {
