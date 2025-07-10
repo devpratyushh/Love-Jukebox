@@ -20,14 +20,14 @@ export type YoutubeSearchInput = z.infer<typeof YoutubeSearchInputSchema>;
 const YoutubeSearchOutputSchema = z.object({
   youtubeUrl: z
     .string()
-    .describe('The URL of the best matching, embeddable YouTube lyric video for the song. This should be an empty string if no suitable video is found.'),
+    .describe('The URL of the best matching, embeddable YouTube video for the song. This should be an empty string if no suitable video is found.'),
   isAccurate: z
     .boolean()
     .describe('Whether the YouTube result is an accurate match for the given song and artist.'),
   reason: z
     .string()
     .optional()
-    .describe('If no video is found, a brief explanation of why (e.g., "No lyric video found.").'),
+    .describe('If no video is found, a brief explanation of why (e.g., "No official video found.").'),
 });
 export type YoutubeSearchOutput = z.infer<typeof YoutubeSearchOutputSchema>;
 
@@ -39,17 +39,19 @@ const youtubeSearchPrompt = ai.definePrompt({
   name: 'youtubeSearchPrompt',
   input: {schema: YoutubeSearchInputSchema},
   output: {schema: YoutubeSearchOutputSchema},
-  prompt: `You are an AI assistant that finds the best YouTube lyric video for a song.
+  prompt: `You are a highly accurate music video search assistant. Your task is to find the best embeddable YouTube video for a given song.
 
-  Your task is to use a search engine to find the most popular and accurate lyric video for the following song:
   Song Title: {{{title}}}
   Artist: {{{artist}}}
 
-  **CRITICAL INSTRUCTIONS:**
-  - The video **MUST** be embeddable.
-  - Prioritize lyric videos from reputable channels.
-  - If you successfully find a video, set \`isAccurate\` to \`true\` and return the full YouTube URL.
-  - If you cannot find a suitable lyric video, return an empty string for \`youtubeUrl\`, set \`isAccurate\` to \`false\`, and provide a brief \`reason\`.`,
+  Follow these steps precisely:
+  1.  **Search for an OFFICIAL MUSIC VIDEO** from the artist's official channel or VEVO channel. This is the highest priority.
+  2.  If an official music video is not found, **search for an OFFICIAL AUDIO or ART TRACK** from the artist's official channel. These are often named "[Song Title] (Official Audio)".
+  3.  If neither of the above is found, **search for a high-quality lyric video** from a reputable channel.
+  4.  The video **MUST** be embeddable. Do not return videos that have embedding disabled.
+
+  - If you find a suitable video, set \`isAccurate\` to \`true\` and return the full YouTube URL in \`youtubeUrl\`.
+  - If you cannot find any suitable video after trying all steps, set \`isAccurate\` to \`false\`, return an empty string for \`youtubeUrl\`, and provide a brief \`reason\` (e.g., "No embeddable official video or audio found.").`,
 });
 
 const youtubeSearchFlow = ai.defineFlow(
