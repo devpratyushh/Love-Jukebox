@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { Music2, Youtube, Heart } from "lucide-react";
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 import type { PlaylistSortOrder } from "@/app/page";
 
 const YoutubePlayer = ({ song }: { song: Song | null }) => {
@@ -81,6 +81,7 @@ export function YoutubePlaylist({ songs, sortOrder, setSortOrder, onToggleFavori
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
           <SelectContent>
+            <SelectItem value="favorites-first">Favorites</SelectItem>
             <SelectItem value="newest-first">Newest First</SelectItem>
             <SelectItem value="oldest-first">Oldest First</SelectItem>
             <SelectItem value="title-az">Title (A-Z)</SelectItem>
@@ -115,8 +116,11 @@ export function YoutubePlaylist({ songs, sortOrder, setSortOrder, onToggleFavori
                         </div>
                         <div className="flex-1 overflow-hidden">
                             <p className="font-semibold truncate text-foreground">{song.title}</p>
-                            <p className="text-sm text-muted-foreground truncate">{song.artist}</p>
-                            <p className="text-xs text-muted-foreground/80 truncate">{format(new Date(song.date), "dd MMMM yyyy")}</p>
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground truncate">
+                              <p className="truncate">{song.artist}</p>
+                              <span className="text-muted-foreground/80">&middot;</span>
+                              <p className="text-xs text-muted-foreground/80 truncate shrink-0">{format(parseISO(song.date), "MMM d, yyyy")}</p>
+                            </div>
                         </div>
                     </button>
                     <Button 

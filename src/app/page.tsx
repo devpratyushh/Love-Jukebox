@@ -13,7 +13,7 @@ import { YoutubePlaylist } from "@/components/youtube-playlist";
 import { FlyingHearts } from "@/components/flying-hearts";
 
 type SortOrder = "newest-first" | "oldest-first";
-export type PlaylistSortOrder = "newest-first" | "oldest-first" | "title-az";
+export type PlaylistSortOrder = "newest-first" | "oldest-first" | "title-az" | "favorites-first";
 
 
 export default function Home() {
@@ -51,6 +51,10 @@ export default function Home() {
         return new Date(a.date).getTime() - new Date(b.date).getTime();
       case 'title-az':
         return a.title.localeCompare(b.title);
+      case 'favorites-first':
+        if (a.isFavorite && !b.isFavorite) return -1;
+        if (!a.isFavorite && b.isFavorite) return 1;
+        return new Date(b.date).getTime() - new Date(a.date).getTime();
       case 'newest-first':
       default:
         return new Date(b.date).getTime() - new Date(a.date).getTime();
