@@ -107,6 +107,7 @@ export function SongForm({ onSongAdded }: SongFormProps) {
         youtubeUrl: searchResult.youtubeUrl,
         photoUrl: photoUrl,
         lyrics: lyricResult?.lyrics,
+        start: values.start,
       };
 
       onSongAdded(newSong);

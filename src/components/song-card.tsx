@@ -57,7 +57,7 @@ const LyricsDisplay = ({ lyrics }: { lyrics: string }) => {
 
 
 export function SongCard({ song }: { song: Song }) {
-  const embedUrl = getYoutubeEmbedUrl(song.youtubeUrl);
+  const embedUrl = getYoutubeEmbedUrl(song.youtubeUrl, song.start);
 
   return (
     <Card className="overflow-hidden">

@@ -19,10 +19,27 @@ export function getYoutubeVideoId(url: string): string | null {
   return videoId ? videoId.replace(/[^a-zA-Z0-9_-]/g, '') : null;
 }
 
+function timeToSeconds(time: string): number {
+  if (!time || !/^\d{1,2}:\d{2}$/.test(time)) {
+    return 0;
+  }
+  const [minutes, seconds] = time.split(':').map(Number);
+  return (minutes * 60) + seconds;
+}
 
-export function getYoutubeEmbedUrl(url: string): string | null {
+
+export function getYoutubeEmbedUrl(url: string, startTime?: string): string | null {
   const videoId = getYoutubeVideoId(url);
-  return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
+  if (!videoId) return null;
+
+  let embedUrl = `https://www.youtube.com/embed/${videoId}`;
+  
+  const startSeconds = startTime ? timeToSeconds(startTime) : 0;
+  if (startSeconds > 0) {
+    embedUrl += `?start=${startSeconds}`;
+  }
+
+  return embedUrl;
 }
 
 export function createYoutubePlaylistUrl(urls: string[]): string | null {

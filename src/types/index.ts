@@ -7,4 +7,5 @@ export type Song = {
   youtubeUrl: string;
   photoUrl?: string;
   lyrics?: string;
+  start?: string;
 };
