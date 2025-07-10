@@ -20,7 +20,7 @@ export type PlaylistSortOrder = "newest-first" | "oldest-first" | "title-az" | "
 export default function Home() {
   const [songs, setSongs] = useState<Song[]>(initialSongs);
   const [timelineSortOrder, setTimelineSortOrder] = useState<SortOrder>("newest-first");
-  const [playlistSortOrder, setPlaylistSortOrder] = useState<PlaylistSortOrder>("newest-first");
+  const [playlistSortOrder, setPlaylistSortOrder] = useState<PlaylistSortOrder>("favorites-first");
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isPlaylistOpen, setIsPlaylistOpen] = useState(false);
   const [activeSong, setActiveSong] = useState<Song | null>(null);
@@ -66,27 +66,39 @@ export default function Home() {
   
   const favoriteSongs = songs.filter(s => s.isFavorite).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   
-  const nonFavoriteSongs = [...songs].filter(s => !s.isFavorite).sort((a, b) => {
+  const otherSongs = [...songs].filter(s => !s.isFavorite).sort((a, b) => {
     switch (playlistSortOrder) {
       case 'oldest-first':
         return new Date(a.date).getTime() - new Date(b.date).getTime();
       case 'title-az':
         return a.title.localeCompare(b.title);
-      case 'favorites-first':
-         if (a.isFavorite && !b.isFavorite) return -1;
-         if (!a.isFavorite && b.isFavorite) return 1;
-         return new Date(b.date).getTime() - new Date(a.date).getTime();
       case 'newest-first':
-      default:
         return new Date(b.date).getTime() - new Date(a.date).getTime();
+      case 'favorites-first':
+      default: // Also default to favorites first
+         return new Date(b.date).getTime() - new Date(a.date).getTime();
     }
   });
+  
+  const sortedOtherSongs = [...otherSongs]; // Already sorted by date as a fallback
+
+  const allPlaylistSongs = [
+      ...favoriteSongs, 
+      ...(playlistSortOrder === 'favorites-first' 
+          ? sortedOtherSongs 
+          : [...favoriteSongs, ...otherSongs].sort((a, b) => {
+              if (playlistSortOrder === 'oldest-first') return new Date(a.date).getTime() - new Date(b.date).getTime();
+              if (playlistSortOrder === 'title-az') return a.title.localeCompare(b.title);
+              return new Date(b.date).getTime() - new Date(a.date).getTime();
+          })
+      )
+  ];
 
 
   return (
-    <div className="relative bg-background">
+    <div className="relative bg-background h-screen overflow-hidden flex flex-col">
       <FlyingHearts />
-      <main className="relative z-10 min-h-screen bg-transparent font-body text-foreground flex flex-col">
+      <main className="relative z-10 font-body text-foreground flex flex-col flex-1 min-h-0">
         <div className="container mx-auto px-4 pt-8">
           <header className="text-center mb-8">
             <div className="inline-flex items-center justify-center gap-4">
@@ -117,7 +129,7 @@ export default function Home() {
              <div className="flex flex-col h-full">
                 <YoutubePlaylist 
                   favoriteSongs={favoriteSongs}
-                  otherSongs={nonFavoriteSongs}
+                  otherSongs={otherSongs}
                   sortOrder={playlistSortOrder}
                   setSortOrder={setPlaylistSortOrder}
                   onToggleFavorite={toggleFavorite}
@@ -141,7 +153,7 @@ export default function Home() {
           <SheetContent side="bottom" className="w-full h-[80vh] p-0">
              <YoutubePlaylist 
                 favoriteSongs={favoriteSongs}
-                otherSongs={nonFavoriteSongs}
+                otherSongs={otherSongs}
                 sortOrder={playlistSortOrder}
                 setSortOrder={setPlaylistSortOrder}
                 onToggleFavorite={toggleFavorite}
