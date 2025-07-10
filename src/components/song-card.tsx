@@ -57,15 +57,15 @@ const LyricsDisplay = ({ lyrics }: { lyrics: string }) => {
 
 
 export function SongCard({ song, onDelete, onPlay }: { song: Song; onDelete: (id: string) => void; onPlay: (song: Song) => void; }) {
-  const embedUrl = getYoutubeEmbedUrl(song.youtubeUrl, song.start);
+  const imageUrl = song.photoUrl ?? song.thumbnailUrl;
 
   return (
     <Card className="overflow-hidden flex flex-col">
       <div className="relative w-full aspect-video bg-muted group">
-        {song.photoUrl && (
+        {imageUrl && (
           <>
             <Image
-              src={song.photoUrl}
+              src={imageUrl}
               alt={song.title}
               fill
               className="object-cover"
@@ -83,17 +83,6 @@ export function SongCard({ song, onDelete, onPlay }: { song: Song; onDelete: (id
               </Button>
             </div>
           </>
-        )}
-        
-        {!song.photoUrl && embedUrl && (
-          <iframe
-            src={embedUrl}
-            title={song.title}
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-            className="w-full h-full"
-          ></iframe>
         )}
       </div>
 
