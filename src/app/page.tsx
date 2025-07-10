@@ -14,14 +14,16 @@ import { FlyingHearts } from "@/components/flying-hearts";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-type SortOrder = "newest-first" | "oldest-first";
+type TimelineSortOrder = "newest-first" | "oldest-first";
 export type PlaylistSortOrder = "newest-first" | "oldest-first" | "title-az" | "favorites-first";
+export type TimelineFilter = "all" | "favorites";
 
 
 export default function Home() {
   const [songs, setSongs] = useState<Song[]>(initialSongs);
-  const [timelineSortOrder, setTimelineSortOrder] = useState<SortOrder>("newest-first");
+  const [timelineSortOrder, setTimelineSortOrder] = useState<TimelineSortOrder>("newest-first");
   const [playlistSortOrder, setPlaylistSortOrder] = useState<PlaylistSortOrder>("favorites-first");
+  const [timelineFilter, setTimelineFilter] = useState<TimelineFilter>("all");
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isPlaylistOpen, setIsPlaylistOpen] = useState(false);
   const [activeSong, setActiveSong] = useState<Song | null>(null);
@@ -60,7 +62,11 @@ export default function Home() {
     }));
   };
   
-  const sortedTimelineSongs = [...songs].sort((a, b) => {
+  const filteredTimelineSongs = timelineFilter === 'favorites'
+    ? songs.filter(song => song.isFavorite)
+    : songs;
+
+  const sortedTimelineSongs = [...filteredTimelineSongs].sort((a, b) => {
     if (timelineSortOrder === 'oldest-first') {
       return new Date(a.date).getTime() - new Date(b.date).getTime();
     }
@@ -123,7 +129,9 @@ export default function Home() {
              <SongTimeline 
                 songs={sortedTimelineSongs} 
                 sortOrder={timelineSortOrder} 
-                setSortOrder={setTimelineSortOrder} 
+                setSortOrder={setTimelineSortOrder}
+                timelineFilter={timelineFilter}
+                setTimelineFilter={setTimelineFilter}
                 onDeleteSong={deleteSong}
                 onToggleDateFavorite={toggleDateFavorite}
                 onPlaySong={playSong}

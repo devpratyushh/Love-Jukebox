@@ -18,10 +18,12 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Heart, Calendar } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { format, parseISO } from 'date-fns';
 import { cn } from "@/lib/utils";
+import { TimelineFilter } from "@/app/page";
 
 
 type SortOrder = "newest-first" | "oldest-first";
@@ -30,12 +32,14 @@ interface SongTimelineProps {
   songs: Song[];
   sortOrder: SortOrder;
   setSortOrder: Dispatch<SetStateAction<SortOrder>>;
+  timelineFilter: TimelineFilter;
+  setTimelineFilter: Dispatch<SetStateAction<TimelineFilter>>;
   onDeleteSong: (id: string) => void;
   onToggleDateFavorite: (date: string, shouldBeFavorite: boolean) => void;
   onPlaySong: (song: Song) => void;
 }
 
-export function SongTimeline({ songs, sortOrder, setSortOrder, onDeleteSong, onToggleDateFavorite, onPlaySong }: SongTimelineProps) {
+export function SongTimeline({ songs, sortOrder, setSortOrder, timelineFilter, setTimelineFilter, onDeleteSong, onToggleDateFavorite, onPlaySong }: SongTimelineProps) {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -79,16 +83,26 @@ export function SongTimeline({ songs, sortOrder, setSortOrder, onDeleteSong, onT
     <div className="w-full h-full flex flex-col">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-4 bg-muted/80 backdrop-blur-sm z-20 shrink-0">
         <h2 className="text-3xl font-headline font-bold text-primary">Our Mixtape</h2>
-        {isClient && songs.length > 1 && (
-          <Select onValueChange={(value) => setSortOrder(value as SortOrder)} defaultValue={sortOrder}>
-            <SelectTrigger className="w-full sm:w-[180px]">
-              <SelectValue placeholder="Sort by" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="newest-first">Newest First</SelectItem>
-              <SelectItem value="oldest-first">Oldest First</SelectItem>
-            </SelectContent>
-          </Select>
+        {isClient && (
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+            <Tabs value={timelineFilter} onValueChange={(value) => setTimelineFilter(value as TimelineFilter)}>
+              <TabsList>
+                <TabsTrigger value="all">All</TabsTrigger>
+                <TabsTrigger value="favorites">Favorites</TabsTrigger>
+              </TabsList>
+            </Tabs>
+            {songs.length > 1 && (
+              <Select onValueChange={(value) => setSortOrder(value as SortOrder)} defaultValue={sortOrder}>
+                <SelectTrigger className="w-full sm:w-[180px]">
+                  <SelectValue placeholder="Sort by" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="newest-first">Newest First</SelectItem>
+                  <SelectItem value="oldest-first">Oldest First</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
+          </div>
         )}
       </div>
       
@@ -100,7 +114,7 @@ export function SongTimeline({ songs, sortOrder, setSortOrder, onDeleteSong, onT
               return (
                 <AccordionItem key={date} value={date} className="border-b-0">
                   <div className="sticky top-0 z-10 flex items-center bg-card text-card-foreground rounded-lg border shadow-sm data-[state=open]:rounded-b-none pr-4">
-                    <AccordionTrigger className="flex-1 px-6 py-4 hover:no-underline">
+                    <AccordionTrigger className="flex-1 px-6 py-4 hover:no-underline" hideChevron>
                       <div className="flex items-center gap-3 text-lg font-medium">
                           <Calendar className="h-5 w-5 text-muted-foreground" />
                           <time dateTime={date}>{format(parseISO(date), "dd MMMM yyyy")}</time>
@@ -133,8 +147,12 @@ export function SongTimeline({ songs, sortOrder, setSortOrder, onDeleteSong, onT
         ) : (
           <div className="text-center py-20 px-6 rounded-lg border-2 border-dashed border-border bg-card m-4">
             <Heart className="mx-auto h-12 w-12 text-muted-foreground" />
-            <h3 className="mt-4 text-xl font-headline font-medium text-foreground">No songs yet</h3>
-            <p className="mt-2 text-sm text-muted-foreground">Add a song to start your shared jukebox!</p>
+            <h3 className="mt-4 text-xl font-headline font-medium text-foreground">
+              {timelineFilter === 'favorites' ? 'No favorites yet' : 'No songs yet'}
+            </h3>
+            <p className="mt-2 text-sm text-muted-foreground">
+              {timelineFilter === 'favorites' ? 'Click the heart on a song to add it here.' : 'Add a song to start your shared jukebox!'}
+            </p>
           </div>
         )}
       </div>
