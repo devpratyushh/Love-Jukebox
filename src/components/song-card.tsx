@@ -3,10 +3,11 @@
 
 import type { Song } from "@/types";
 import { getYoutubeEmbedUrl } from "@/lib/youtube";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { MessageSquare, FileText } from "lucide-react";
+import { MessageSquare, FileText, Youtube } from "lucide-react";
 import Image from "next/image";
+import { Button } from "./ui/button";
 
 const LyricsDisplay = ({ lyrics }: { lyrics: string }) => {
     if (!lyrics) {
@@ -60,7 +61,7 @@ export function SongCard({ song }: { song: Song }) {
   const embedUrl = getYoutubeEmbedUrl(song.youtubeUrl, song.start);
 
   return (
-    <Card className="overflow-hidden">
+    <Card className="overflow-hidden flex flex-col">
       <div className="relative w-full aspect-video bg-muted">
         {song.photoUrl && (
           <Image
@@ -97,27 +98,37 @@ export function SongCard({ song }: { song: Song }) {
         )}
       </div>
 
-      <CardHeader>
-        <CardTitle>{song.title}</CardTitle>
-        <CardDescription>by {song.artist}</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {song.message && (
-          <div className="flex items-start gap-4">
-            <MessageSquare className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-1" />
-            <p className="italic text-muted-foreground">"{song.message}"</p>
-          </div>
-        )}
-
-        {song.lyrics && (
-          <div className="flex items-start gap-4">
-            <FileText className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-1" />
-            <div className="w-full">
-                <LyricsDisplay lyrics={song.lyrics} />
+      <div className="flex flex-col flex-grow">
+        <CardHeader>
+          <CardTitle>{song.title}</CardTitle>
+          <CardDescription>by {song.artist}</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4 flex-grow">
+          {song.message && (
+            <div className="flex items-start gap-4">
+              <MessageSquare className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-1" />
+              <p className="italic text-muted-foreground">"{song.message}"</p>
             </div>
-          </div>
-        )}
-      </CardContent>
+          )}
+
+          {song.lyrics && (
+            <div className="flex items-start gap-4">
+              <FileText className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-1" />
+              <div className="w-full">
+                  <LyricsDisplay lyrics={song.lyrics} />
+              </div>
+            </div>
+          )}
+        </CardContent>
+        <CardFooter>
+            <Button variant="link" asChild className="p-0 h-auto text-muted-foreground hover:text-primary">
+                <a href={song.youtubeUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+                    <Youtube className="h-4 w-4" />
+                    Watch on YouTube
+                </a>
+            </Button>
+        </CardFooter>
+      </div>
     </Card>
   );
 }
