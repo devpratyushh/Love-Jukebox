@@ -12,8 +12,8 @@ export function SongCard({ song }: { song: Song }) {
 
   return (
     <Card className="overflow-hidden">
-      {song.photoUrl && (
-        <div className="relative w-full aspect-video">
+      <div className="relative w-full aspect-video bg-muted">
+        {song.photoUrl && (
           <Image
             src={song.photoUrl}
             alt={song.title}
@@ -21,8 +21,33 @@ export function SongCard({ song }: { song: Song }) {
             className="object-cover"
             data-ai-hint="song lovers"
           />
-        </div>
-      )}
+        )}
+        
+        {!song.photoUrl && embedUrl && (
+          <iframe
+            src={embedUrl}
+            title={song.title}
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            className="w-full h-full"
+          ></iframe>
+        )}
+
+        {song.photoUrl && embedUrl && (
+            <div className="absolute bottom-2 right-2 z-10" style={{ width: '30%', paddingBottom: '16.875%' /* 16:9 of 30% width */ }}>
+                 <iframe
+                    src={embedUrl}
+                    title={`${song.title} preview`}
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="absolute top-0 left-0 w-full h-full rounded-md shadow-lg"
+                ></iframe>
+            </div>
+        )}
+      </div>
+
       <CardHeader>
         <CardTitle>{song.title}</CardTitle>
         <CardDescription>by {song.artist}</CardDescription>
@@ -32,22 +57,6 @@ export function SongCard({ song }: { song: Song }) {
           <div className="flex items-start gap-4">
             <MessageSquare className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-1" />
             <p className="italic text-muted-foreground">"{song.message}"</p>
-          </div>
-        )}
-
-        {embedUrl && (
-          <div className="flex items-start gap-4">
-             <Youtube className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-1" />
-            <div className="relative w-full aspect-video rounded-md overflow-hidden">
-              <iframe
-                src={embedUrl}
-                title={song.title}
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="w-full h-full"
-              ></iframe>
-            </div>
           </div>
         )}
 
