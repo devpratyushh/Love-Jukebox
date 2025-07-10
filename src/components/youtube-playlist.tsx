@@ -2,91 +2,92 @@
 "use client";
 
 import type { Song } from "@/types";
-import { createYoutubePlaylistUrl } from "@/lib/youtube";
-import { Youtube } from "lucide-react";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
 import { getYoutubeEmbedUrl } from "@/lib/youtube";
+import { useState, useEffect } from "react";
+import Image from 'next/image';
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
+import { Music2, Youtube } from "lucide-react";
 
+const YoutubePlayer = ({ song }: { song: Song | null }) => {
+  const embedUrl = song ? getYoutubeEmbedUrl(song.youtubeUrl, song.start) : null;
+
+  return (
+    <div className="aspect-video w-full bg-card rounded-lg overflow-hidden border shadow-sm">
+      {embedUrl ? (
+        <iframe
+          key={song?.id} // Add key to force re-render
+          src={embedUrl + '&autoplay=1'}
+          title={song?.title}
+          frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          className="w-full h-full"
+        ></iframe>
+      ) : (
+        <div className="w-full h-full flex items-center justify-center bg-muted">
+            <div className="text-center text-muted-foreground">
+                <Youtube className="mx-auto h-12 w-12" />
+                <p className="mt-2">Select a song to play</p>
+            </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 export function YoutubePlaylist({ songs }: { songs: Song[] }) {
-  const playlistUrl = createYoutubePlaylistUrl(songs.map(s => s.youtubeUrl));
+  const [currentSong, setCurrentSong] = useState<Song | null>(null);
+
+  useEffect(() => {
+    // Set the first song as current when the component loads or songs change
+    if (songs.length > 0 && !currentSong) {
+      setCurrentSong(songs[0]);
+    }
+  }, [songs, currentSong]);
+
 
   if (songs.length === 0) {
     return null;
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full bg-muted/50 rounded-lg p-4">
       <h2 className="text-3xl font-headline font-bold text-primary mb-4 shrink-0">Our Playlist</h2>
       
-      {/* Desktop View: Iframe Playlist */}
-      <div className="hidden lg:block flex-1 min-h-0">
-        {playlistUrl ? (
-          <div className="h-full rounded-lg overflow-hidden border shadow-sm">
-            <iframe
-              width="560"
-              height="315"
-              src={playlistUrl}
-              title="YouTube video player"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              referrerPolicy="strict-origin-when-cross-origin"
-              allowFullScreen
-              className="w-full h-full"
-            ></iframe>
-          </div>
-        ) : (
-          <div className="flex items-center justify-center h-full bg-card rounded-lg border">
-            <p className="text-muted-foreground">Could not load playlist.</p>
-          </div>
-        )}
+      <div className="shrink-0 mb-4">
+        <YoutubePlayer song={currentSong} />
       </div>
 
-      {/* Mobile View: Horizontal Scroll */}
-      <div className="block lg:hidden">
-         <Carousel
-          opts={{
-            align: "start",
-          }}
-          className="w-full"
-        >
-          <CarouselContent>
-            {songs.map((song) => {
-              const embedUrl = getYoutubeEmbedUrl(song.youtubeUrl);
-              return (
-                <CarouselItem key={song.id} className="basis-11/12 md:basis-1/2">
-                  <div className="p-1">
-                     {embedUrl ? (
-                      <div className="aspect-video rounded-lg overflow-hidden border shadow-sm">
-                        <iframe
-                          src={embedUrl}
-                          title={song.title}
-                          frameBorder="0"
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                          allowFullScreen
-                          className="w-full h-full"
-                        ></iframe>
-                      </div>
-                    ) : (
-                       <div className="aspect-video flex items-center justify-center h-full bg-card rounded-lg border">
-                          <p className="text-muted-foreground text-sm">Video not available</p>
-                        </div>
+      <div className="flex-1 min-h-0">
+          <ScrollArea className="h-full pr-4 -mr-4">
+            <div className="space-y-2">
+              {songs.map((song) => (
+                  <button
+                    key={song.id}
+                    onClick={() => setCurrentSong(song)}
+                    className={cn(
+                        "w-full text-left p-2 rounded-md flex items-center gap-4 transition-colors",
+                        currentSong?.id === song.id ? "bg-primary/20 text-primary-foreground" : "hover:bg-primary/10"
                     )}
-                  </div>
-                </CarouselItem>
-              )
-            })}
-          </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
-        </Carousel>
+                  >
+                    <div className="w-12 h-12 bg-muted rounded-md shrink-0 flex items-center justify-center">
+                        {song.photoUrl ? (
+                            <Image src={song.photoUrl} alt={song.title} width={48} height={48} className="w-full h-full object-cover rounded-md" />
+                        ) : (
+                            <Music2 className="w-6 h-6 text-muted-foreground" />
+                        )}
+                    </div>
+                    <div className="flex-1 overflow-hidden">
+                        <p className="font-semibold truncate text-foreground">{song.title}</p>
+                        <p className="text-sm text-muted-foreground truncate">{song.artist}</p>
+                    </div>
+                  </button>
+              ))}
+            </div>
+          </ScrollArea>
       </div>
+
     </div>
   );
 }

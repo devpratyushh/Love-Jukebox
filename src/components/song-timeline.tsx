@@ -66,8 +66,8 @@ export function SongTimeline({ songs, sortOrder, setSortOrder }: SongTimelinePro
 
 
   return (
-    <div className="w-full space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div className="w-full h-full flex flex-col">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-4 bg-muted/80 backdrop-blur-sm z-10 shrink-0">
         <h2 className="text-3xl font-headline font-bold text-primary">Our Mixtape</h2>
         {songs.length > 1 && (
           <Select onValueChange={(value) => setSortOrder(value as SortOrder)} defaultValue={sortOrder}>
@@ -81,34 +81,36 @@ export function SongTimeline({ songs, sortOrder, setSortOrder }: SongTimelinePro
           </Select>
         )}
       </div>
-
-      {groupedAndSortedSongs.length > 0 ? (
-        <Accordion type="multiple" defaultValue={groupedAndSortedSongs.map(g => g.date)} className="w-full space-y-4">
-           {groupedAndSortedSongs.map(({ date, songs }) => (
-            <AccordionItem key={date} value={date} className="border-b-0">
-               <AccordionTrigger className="bg-card text-card-foreground rounded-lg border shadow-sm px-6 py-4 hover:no-underline data-[state=open]:rounded-b-none">
-                 <div className="flex items-center gap-3 text-lg font-medium">
-                    <Calendar className="h-5 w-5 text-muted-foreground" />
-                    <time dateTime={date}>{format(parseISO(date), "dd MMMM yyyy")}</time>
-                 </div>
-               </AccordionTrigger>
-               <AccordionContent className="bg-muted/50 rounded-b-lg border border-t-0 p-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {songs.map((song) => (
-                      <SongCard key={song.id} song={song} />
-                    ))}
+      
+      <div className="flex-1 overflow-y-auto">
+        {groupedAndSortedSongs.length > 0 ? (
+          <Accordion type="multiple" defaultValue={groupedAndSortedSongs.map(g => g.date)} className="w-full space-y-4 p-4">
+            {groupedAndSortedSongs.map(({ date, songs }) => (
+              <AccordionItem key={date} value={date} className="border-b-0">
+                <AccordionTrigger className="sticky top-0 z-10 bg-card text-card-foreground rounded-lg border shadow-sm px-6 py-4 hover:no-underline data-[state=open]:rounded-b-none">
+                  <div className="flex items-center gap-3 text-lg font-medium">
+                      <Calendar className="h-5 w-5 text-muted-foreground" />
+                      <time dateTime={date}>{format(parseISO(date), "dd MMMM yyyy")}</time>
                   </div>
-               </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
-      ) : (
-        <div className="text-center py-20 px-6 rounded-lg border-2 border-dashed border-border bg-card">
-          <Heart className="mx-auto h-12 w-12 text-muted-foreground" />
-          <h3 className="mt-4 text-xl font-headline font-medium text-foreground">No songs yet</h3>
-          <p className="mt-2 text-sm text-muted-foreground">Add a song to start your shared jukebox!</p>
-        </div>
-      )}
+                </AccordionTrigger>
+                <AccordionContent className="bg-muted/50 rounded-b-lg border border-t-0 p-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {songs.map((song) => (
+                        <SongCard key={song.id} song={song} />
+                      ))}
+                    </div>
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        ) : (
+          <div className="text-center py-20 px-6 rounded-lg border-2 border-dashed border-border bg-card m-4">
+            <Heart className="mx-auto h-12 w-12 text-muted-foreground" />
+            <h3 className="mt-4 text-xl font-headline font-medium text-foreground">No songs yet</h3>
+            <p className="mt-2 text-sm text-muted-foreground">Add a song to start your shared jukebox!</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

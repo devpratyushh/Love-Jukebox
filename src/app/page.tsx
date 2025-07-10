@@ -23,6 +23,15 @@ export default function Home() {
     setSongs([newSong, ...songs]);
     setIsFormOpen(false); // Close dialog on successful submission
   };
+  
+  const sortedSongs = [...songs].sort((a, b) => {
+    if (sortOrder === 'oldest-first') {
+      return new Date(a.date).getTime() - new Date(b.date).getTime();
+    }
+    // newest-first is default
+    return new Date(b.date).getTime() - new Date(a.date).getTime();
+  });
+
 
   return (
     <div className="relative bg-background">
@@ -44,21 +53,14 @@ export default function Home() {
         </div>
         
         <div className="flex-1 container mx-auto px-4 pb-8 grid grid-cols-1 lg:grid-cols-6 lg:gap-8 overflow-hidden">
-          <section className="lg:col-span-4 flex flex-col overflow-hidden bg-muted/50 rounded-lg p-4">
-              <div className="flex-1 overflow-y-auto pr-4 -mr-4">
-                 <SongTimeline songs={songs} sortOrder={sortOrder} setSortOrder={setSortOrder} />
-              </div>
+          <section className="lg:col-span-4 flex flex-col overflow-hidden bg-muted/50 rounded-lg">
+             <SongTimeline songs={songs} sortOrder={sortOrder} setSortOrder={setSortOrder} />
           </section>
           <aside className="lg:col-span-2 hidden lg:flex flex-col overflow-hidden">
-             <div className="h-[480px] flex flex-col">
-                <YoutubePlaylist songs={songs} />
+             <div className="flex flex-col h-full">
+                <YoutubePlaylist songs={sortedSongs} />
              </div>
           </aside>
-        </div>
-
-        {/* Mobile-only playlist view, since aside is hidden */}
-        <div className="lg:hidden container mx-auto px-4 pb-8">
-            <YoutubePlaylist songs={songs} />
         </div>
 
       </main>
