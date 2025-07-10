@@ -72,7 +72,7 @@ export function SongTimeline({ songs, sortOrder, setSortOrder }: SongTimelinePro
 
   return (
     <div className="w-full h-full flex flex-col">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-4 bg-muted/80 backdrop-blur-sm z-10 shrink-0">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-4 bg-muted/80 backdrop-blur-sm z-20 shrink-0">
         <h2 className="text-3xl font-headline font-bold text-primary">Our Mixtape</h2>
         {isClient && songs.length > 1 && (
           <Select onValueChange={(value) => setSortOrder(value as SortOrder)} defaultValue={sortOrder}>
