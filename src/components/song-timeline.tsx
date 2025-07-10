@@ -113,8 +113,8 @@ export function SongTimeline({ songs, sortOrder, setSortOrder, timelineFilter, s
               const allFavorited = songs.every(s => s.isFavorite);
               return (
                 <AccordionItem key={date} value={date} className="border-b-0">
-                  <div className="sticky top-0 z-10 flex items-center bg-card text-card-foreground rounded-lg border shadow-sm data-[state=open]:rounded-b-none pr-4">
-                    <AccordionTrigger className="flex-1 px-6 py-4 hover:no-underline" hideChevron>
+                  <div className="sticky top-0 z-10 flex items-center bg-card text-card-foreground rounded-lg border shadow-sm data-[state=open]:rounded-b-none pr-2">
+                    <AccordionTrigger className="flex-1 px-6 py-4 hover:no-underline">
                       <div className="flex items-center gap-3 text-lg font-medium">
                           <Calendar className="h-5 w-5 text-muted-foreground" />
                           <time dateTime={date}>{format(parseISO(date), "dd MMMM yyyy")}</time>
