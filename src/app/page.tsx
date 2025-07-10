@@ -113,7 +113,7 @@ export default function Home() {
           <header className="text-center mb-8">
             <div className="inline-flex items-center justify-center gap-4">
               <Heart className="h-10 w-10 text-primary animate-pulse" />
-              <h1 className="text-5xl md:text-6xl font-headline font-bold tracking-tight bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              <h1 className="text-5xl md:text-6xl font-headline font-bold tracking-tight bg-gradient-to-r from-pink-400 to-pink-600 bg-clip-text text-transparent">
                 Love Jukebox
               </h1>
               <Music className="h-10 w-10 text-accent" />
