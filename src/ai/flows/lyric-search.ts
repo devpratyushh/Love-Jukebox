@@ -14,6 +14,8 @@ import {z} from 'genkit';
 const LyricSearchInputSchema = z.object({
   title: z.string().describe('The title of the song.'),
   artist: z.string().describe('The artist of the song.'),
+  start: z.string().optional().describe('The start timestamp for the lyrics snippet (e.g., "0:35").'),
+  end: z.string().optional().describe('The end timestamp for the lyrics snippet (e.g., "1:15").'),
 });
 export type LyricSearchInput = z.infer<typeof LyricSearchInputSchema>;
 
@@ -37,7 +39,13 @@ const lyricSearchPrompt = ai.definePrompt({
   Song Title: {{{title}}}
   Artist: {{{artist}}}
 
-  Return the lyrics as a string. If you cannot find the lyrics, return an empty string.`,
+  {{#if start}}
+  The user wants the lyrics starting from {{{start}}}{{#if end}} and ending at {{{end}}}{{/if}}. Please return only the lyrics for this specific time range.
+  {{else}}
+  Return the full lyrics as a string.
+  {{/if}}
+  
+  If you cannot find the lyrics, return an empty string.`,
 });
 
 const lyricSearchFlow = ai.defineFlow(

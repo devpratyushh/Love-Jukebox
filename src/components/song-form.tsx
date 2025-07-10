@@ -33,6 +33,8 @@ const formSchema = z.object({
   message: z.string().optional(),
   date: z.date({ required_error: "A date is required." }),
   photo: z.instanceof(File).optional(),
+  start: z.string().optional(),
+  end: z.string().optional(),
 });
 
 type SongFormValues = z.infer<typeof formSchema>;
@@ -53,6 +55,8 @@ export function SongForm({ onSongAdded }: SongFormProps) {
       artist: "",
       message: "",
       date: new Date(),
+      start: "",
+      end: "",
     },
   });
   
@@ -79,6 +83,8 @@ export function SongForm({ onSongAdded }: SongFormProps) {
         lyricSearch({
           title: values.title,
           artist: values.artist,
+          start: values.start,
+          end: values.end,
         })
       ]);
 
@@ -221,6 +227,38 @@ export function SongForm({ onSongAdded }: SongFormProps) {
               </FormItem>
             )}
           />
+          
+          <div className="space-y-2">
+            <FormLabel>Lyric Snippet (optional)</FormLabel>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FormField
+                control={form.control}
+                name="start"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs text-muted-foreground">Start Time</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g., 0:35" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="end"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs text-muted-foreground">End Time</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g., 1:15" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
 
           <FormField
             control={form.control}
