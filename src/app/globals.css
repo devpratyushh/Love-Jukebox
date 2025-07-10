@@ -90,7 +90,7 @@ body {
 @layer utilities {
   .heart {
     animation: fly 10s linear infinite;
-    color: hsl(var(--primary) / 0.5);
+    color: hsl(var(--primary) / 0.3);
     position: fixed;
     bottom: -20px;
   }

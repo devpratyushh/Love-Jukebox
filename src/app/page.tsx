@@ -108,7 +108,7 @@ export default function Home() {
   return (
     <div className="relative bg-background h-screen overflow-hidden flex flex-col">
       <FlyingHearts />
-      <main className="relative z-10 font-body text-foreground flex flex-col flex-1 min-h-0">
+      <main className="relative z-20 font-body text-foreground flex flex-col flex-1 min-h-0">
         <div className="container mx-auto px-4 pt-8">
           <header className="text-center mb-8">
             <div className="inline-flex items-center justify-center gap-4">

@@ -5,7 +5,7 @@ import { Heart, Music, Mail, Gift, Star } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const ICONS = [Heart, Music, Mail, Gift, Star];
-const HEART_COUNT = 15;
+const HEART_COUNT = 10;
 
 export function FlyingHearts() {
   const [hearts, setHearts] = useState<
@@ -36,7 +36,7 @@ export function FlyingHearts() {
   }
 
   return (
-    <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-0">
+    <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-10">
       {hearts.map(({ Icon, ...style }, i) => (
         <Icon
           key={i}
