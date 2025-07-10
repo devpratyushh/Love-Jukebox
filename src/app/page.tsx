@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -10,7 +11,7 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Heart, Music, PlusCircle } from "lucide-react";
 import { YoutubePlaylist } from "@/components/youtube-playlist";
 
-type SortOrder = "newest-first" | "oldest-first" | "artist-az";
+type SortOrder = "newest-first" | "oldest-first";
 
 export default function Home() {
   const [songs, setSongs] = useLocalStorage<Song[]>("love-jukebox-songs", []);

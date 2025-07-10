@@ -1,3 +1,4 @@
+
 "use client";
 
 import type { Song } from "@/types";
@@ -10,10 +11,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Heart } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Heart, Calendar } from "lucide-react";
 import React from "react";
+import { format, parseISO } from 'date-fns';
 
-type SortOrder = "newest-first" | "oldest-first" | "artist-az";
+
+type SortOrder = "newest-first" | "oldest-first";
 
 interface SongTimelineProps {
   songs: Song[];
@@ -22,19 +31,37 @@ interface SongTimelineProps {
 }
 
 export function SongTimeline({ songs, sortOrder, setSortOrder }: SongTimelineProps) {
-  
-  const sortedSongs = React.useMemo(() => {
-    return [...songs].sort((a, b) => {
-      switch (sortOrder) {
-        case "oldest-first":
-          return new Date(a.date).getTime() - new Date(b.date).getTime();
-        case "artist-az":
-          return a.artist.localeCompare(b.artist);
-        case "newest-first":
-        default:
-          return new Date(b.date).getTime() - new Date(a.date).getTime();
+
+  const groupedAndSortedSongs = React.useMemo(() => {
+    // Group songs by date
+    const grouped = songs.reduce((acc, song) => {
+      const date = format(parseISO(song.date), 'yyyy-MM-dd');
+      if (!acc[date]) {
+        acc[date] = [];
       }
+      acc[date].push(song);
+      return acc;
+    }, {} as Record<string, Song[]>);
+
+    // Sort the dates
+    const sortedDates = Object.keys(grouped).sort((a, b) => {
+        if (sortOrder === 'oldest-first') {
+            return new Date(a).getTime() - new Date(b).getTime();
+        }
+        // newest-first
+        return new Date(b).getTime() - new Date(a).getTime();
     });
+
+    // Sort songs within each group by artist A-Z
+    sortedDates.forEach(date => {
+        grouped[date].sort((a, b) => a.artist.localeCompare(b.artist));
+    });
+
+    return sortedDates.map(date => ({
+      date,
+      songs: grouped[date]
+    }));
+
   }, [songs, sortOrder]);
 
 
@@ -50,18 +77,31 @@ export function SongTimeline({ songs, sortOrder, setSortOrder }: SongTimelinePro
             <SelectContent>
               <SelectItem value="newest-first">Newest First</SelectItem>
               <SelectItem value="oldest-first">Oldest First</SelectItem>
-              <SelectItem value="artist-az">Artist A-Z</SelectItem>
             </SelectContent>
           </Select>
         )}
       </div>
 
-      {sortedSongs.length > 0 ? (
-        <div className="space-y-8">
-          {sortedSongs.map((song) => (
-            <SongCard key={song.id} song={song} />
+      {groupedAndSortedSongs.length > 0 ? (
+        <Accordion type="multiple" defaultValue={groupedAndSortedSongs.map(g => g.date)} className="w-full space-y-4">
+           {groupedAndSortedSongs.map(({ date, songs }) => (
+            <AccordionItem key={date} value={date} className="border-b-0">
+               <AccordionTrigger className="bg-card text-card-foreground rounded-lg border shadow-sm px-6 py-4 hover:no-underline data-[state=open]:rounded-b-none">
+                 <div className="flex items-center gap-3 text-lg font-medium">
+                    <Calendar className="h-5 w-5 text-muted-foreground" />
+                    <time dateTime={date}>{format(parseISO(date), "dd MMMM yyyy")}</time>
+                 </div>
+               </AccordionTrigger>
+               <AccordionContent className="bg-card text-card-foreground rounded-b-lg border border-t-0 shadow-sm p-6 pt-0">
+                  <div className="space-y-6 pt-6 border-t">
+                    {songs.map((song) => (
+                      <SongCard key={song.id} song={song} />
+                    ))}
+                  </div>
+               </AccordionContent>
+            </AccordionItem>
           ))}
-        </div>
+        </Accordion>
       ) : (
         <div className="text-center py-20 px-6 rounded-lg border-2 border-dashed border-border bg-card">
           <Heart className="mx-auto h-12 w-12 text-muted-foreground" />

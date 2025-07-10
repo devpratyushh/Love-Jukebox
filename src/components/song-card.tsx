@@ -1,3 +1,4 @@
+
 "use client";
 
 import type { Song } from "@/types";
@@ -11,17 +12,11 @@ export function SongCard({ song }: { song: Song }) {
   const embedUrl = getYoutubeEmbedUrl(song.youtubeUrl);
 
   return (
-    <div className="bg-card text-card-foreground rounded-lg border shadow-sm p-6 space-y-4">
-      <div className="flex items-center gap-3 text-lg font-medium">
-        <Calendar className="h-5 w-5 text-muted-foreground" />
-        <time dateTime={song.date}>{format(parseISO(song.date), "dd MMMM yyyy")}</time>
-      </div>
-      <Separator />
-
+    <div className="bg-card text-card-foreground rounded-lg border-none shadow-none p-0 space-y-4">
       <div className="flex items-center gap-3">
         <Music className="h-5 w-5 text-muted-foreground" />
         <span>
-          Song {song.id.substring(0, 1)}: <i>{song.title} by {song.artist}</i>
+          <i>{song.title} by {song.artist}</i>
         </span>
       </div>
       <Separator />
