@@ -36,6 +36,16 @@ export default function Home() {
       song.id === id ? { ...song, isFavorite: !song.isFavorite } : song
     ));
   }
+
+  const toggleDateFavorite = (date: string, shouldBeFavorite: boolean) => {
+    setSongs(songs.map(song => {
+      const songDate = new Date(song.date).toISOString().split('T')[0];
+      if (songDate === date) {
+        return { ...song, isFavorite: shouldBeFavorite };
+      }
+      return song;
+    }));
+  };
   
   const sortedTimelineSongs = [...songs].sort((a, b) => {
     if (timelineSortOrder === 'oldest-first') {
@@ -83,7 +93,13 @@ export default function Home() {
         
         <div className="flex-1 container mx-auto px-4 pb-8 grid grid-cols-1 lg:grid-cols-6 lg:gap-8 overflow-hidden">
           <section className="lg:col-span-4 flex flex-col overflow-hidden bg-muted/50 rounded-lg">
-             <SongTimeline songs={sortedTimelineSongs} sortOrder={timelineSortOrder} setSortOrder={setTimelineSortOrder} onDeleteSong={deleteSong} />
+             <SongTimeline 
+                songs={sortedTimelineSongs} 
+                sortOrder={timelineSortOrder} 
+                setSortOrder={setTimelineSortOrder} 
+                onDeleteSong={deleteSong}
+                onToggleDateFavorite={toggleDateFavorite}
+              />
           </section>
           <aside className="lg:col-span-2 hidden lg:flex flex-col overflow-hidden">
              <div className="flex flex-col h-full">

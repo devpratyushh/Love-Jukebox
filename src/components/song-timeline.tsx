@@ -4,6 +4,7 @@
 import type { Song } from "@/types";
 import type { Dispatch, SetStateAction } from "react";
 import { SongCard } from "./song-card";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -20,6 +21,7 @@ import {
 import { Heart, Calendar } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { format, parseISO } from 'date-fns';
+import { cn } from "@/lib/utils";
 
 
 type SortOrder = "newest-first" | "oldest-first";
@@ -29,9 +31,10 @@ interface SongTimelineProps {
   sortOrder: SortOrder;
   setSortOrder: Dispatch<SetStateAction<SortOrder>>;
   onDeleteSong: (id: string) => void;
+  onToggleDateFavorite: (date: string, shouldBeFavorite: boolean) => void;
 }
 
-export function SongTimeline({ songs, sortOrder, setSortOrder, onDeleteSong }: SongTimelineProps) {
+export function SongTimeline({ songs, sortOrder, setSortOrder, onDeleteSong, onToggleDateFavorite }: SongTimelineProps) {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -91,23 +94,40 @@ export function SongTimeline({ songs, sortOrder, setSortOrder, onDeleteSong }: S
       <div className="flex-1 overflow-y-auto">
         {groupedAndSortedSongs.length > 0 ? (
           <Accordion type="multiple" defaultValue={groupedAndSortedSongs.map(g => g.date)} className="w-full space-y-4 p-4">
-            {groupedAndSortedSongs.map(({ date, songs }) => (
-              <AccordionItem key={date} value={date} className="border-b-0">
-                <AccordionTrigger className="sticky top-0 z-10 bg-card text-card-foreground rounded-lg border shadow-sm px-6 py-4 hover:no-underline data-[state=open]:rounded-b-none">
-                  <div className="flex items-center gap-3 text-lg font-medium">
-                      <Calendar className="h-5 w-5 text-muted-foreground" />
-                      <time dateTime={date}>{format(parseISO(date), "dd MMMM yyyy")}</time>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="bg-muted/50 rounded-b-lg border border-t-0 p-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {songs.map((song) => (
-                        <SongCard key={song.id} song={song} onDelete={onDeleteSong} />
-                      ))}
+            {groupedAndSortedSongs.map(({ date, songs }) => {
+              const allFavorited = songs.every(s => s.isFavorite);
+              return (
+                <AccordionItem key={date} value={date} className="border-b-0">
+                  <AccordionTrigger className="sticky top-0 z-10 bg-card text-card-foreground rounded-lg border shadow-sm px-6 py-4 hover:no-underline data-[state=open]:rounded-b-none">
+                    <div className="flex items-center justify-between w-full">
+                      <div className="flex items-center gap-3 text-lg font-medium">
+                          <Calendar className="h-5 w-5 text-muted-foreground" />
+                          <time dateTime={date}>{format(parseISO(date), "dd MMMM yyyy")}</time>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="rounded-full w-8 h-8 -mr-2"
+                        onClick={(e) => {
+                          e.stopPropagation(); // prevent accordion from toggling
+                          onToggleDateFavorite(date, !allFavorited);
+                        }}
+                      >
+                        <Heart className={cn("w-5 h-5", allFavorited ? "text-primary fill-current" : "text-muted-foreground/50")} />
+                        <span className="sr-only">Favorite this date</span>
+                      </Button>
                     </div>
-                </AccordionContent>
-              </AccordionItem>
-            ))}
+                  </AccordionTrigger>
+                  <AccordionContent className="bg-muted/50 rounded-b-lg border border-t-0 p-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {songs.map((song) => (
+                          <SongCard key={song.id} song={song} onDelete={onDeleteSong} />
+                        ))}
+                      </div>
+                  </AccordionContent>
+                </AccordionItem>
+              );
+            })}
           </Accordion>
         ) : (
           <div className="text-center py-20 px-6 rounded-lg border-2 border-dashed border-border bg-card m-4">
