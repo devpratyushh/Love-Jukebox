@@ -8,6 +8,7 @@ import { SongTimeline } from "@/components/song-timeline";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Heart, Music, PlusCircle } from "lucide-react";
+import { YoutubePlaylist } from "@/components/youtube-playlist";
 
 type SortOrder = "newest-first" | "oldest-first" | "artist-az";
 
@@ -38,9 +39,14 @@ export default function Home() {
             </p>
           </header>
 
-          <section className="mb-12">
-            <SongTimeline songs={songs} sortOrder={sortOrder} setSortOrder={setSortOrder} />
-          </section>
+          <div className="grid grid-cols-1 lg:grid-cols-3 lg:gap-8">
+            <section className="lg:col-span-2 mb-12">
+              <SongTimeline songs={songs} sortOrder={sortOrder} setSortOrder={setSortOrder} />
+            </section>
+            <aside className="lg:col-span-1">
+               <YoutubePlaylist songs={songs} />
+            </aside>
+          </div>
 
           <footer className="text-center mt-16 text-sm text-muted-foreground">
             <p>Made with &hearts; for my one and only.</p>
