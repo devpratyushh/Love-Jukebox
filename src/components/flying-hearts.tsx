@@ -36,7 +36,7 @@ export function FlyingHearts() {
   }
 
   return (
-    <div className="fixed top-0 left-0 w-full h-full pointer-events-none -z-10">
+    <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-0">
       {hearts.map(({ Icon, ...style }, i) => (
         <Icon
           key={i}
