@@ -12,6 +12,7 @@ import { Heart, Music, PlusCircle } from "lucide-react";
 import { YoutubePlaylist } from "@/components/youtube-playlist";
 import { FlyingHearts } from "@/components/flying-hearts";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type SortOrder = "newest-first" | "oldest-first";
 export type PlaylistSortOrder = "newest-first" | "oldest-first" | "title-az" | "favorites-first";
@@ -24,6 +25,7 @@ export default function Home() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isPlaylistOpen, setIsPlaylistOpen] = useState(false);
   const [activeSong, setActiveSong] = useState<Song | null>(null);
+  const isMobile = useIsMobile();
 
 
   const addSong = (newSong: Song) => {
@@ -43,7 +45,9 @@ export default function Home() {
 
   const playSong = (song: Song) => {
     setActiveSong(song);
-    setIsPlaylistOpen(true);
+    if (isMobile) {
+      setIsPlaylistOpen(true);
+    }
   };
 
   const toggleDateFavorite = (date: string, shouldBeFavorite: boolean) => {
