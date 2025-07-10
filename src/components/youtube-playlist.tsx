@@ -1,3 +1,4 @@
+
 "use client";
 
 import type { Song } from "@/types";
@@ -21,13 +22,13 @@ export function YoutubePlaylist({ songs }: { songs: Song[] }) {
   }
 
   return (
-    <div>
-      <h2 className="text-3xl font-headline font-bold text-primary mb-4">Our Playlist</h2>
+    <div className="flex flex-col h-full">
+      <h2 className="text-3xl font-headline font-bold text-primary mb-4 shrink-0">Our Playlist</h2>
       
       {/* Desktop View: Iframe Playlist */}
-      <div className="hidden lg:block sticky top-8">
+      <div className="hidden lg:block flex-1 min-h-0">
         {playlistUrl ? (
-          <div className="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden border shadow-sm">
+          <div className="h-full rounded-lg overflow-hidden border shadow-sm">
             <iframe
               width="560"
               height="315"
@@ -41,7 +42,7 @@ export function YoutubePlaylist({ songs }: { songs: Song[] }) {
             ></iframe>
           </div>
         ) : (
-          <div className="flex items-center justify-center h-48 bg-card rounded-lg border">
+          <div className="flex items-center justify-center h-full bg-card rounded-lg border">
             <p className="text-muted-foreground">Could not load playlist.</p>
           </div>
         )}

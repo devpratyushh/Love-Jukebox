@@ -25,9 +25,9 @@ export default function Home() {
   };
 
   return (
-    <>
+    <div className="relative bg-background">
       <FlyingHearts />
-      <main className="h-screen max-h-screen bg-background font-body text-foreground flex flex-col overflow-hidden">
+      <main className="relative z-10 h-screen max-h-screen bg-transparent font-body text-foreground flex flex-col overflow-hidden">
         <div className="container mx-auto px-4 pt-8">
           <header className="text-center mb-8">
             <div className="inline-flex items-center justify-center gap-4">
@@ -43,14 +43,16 @@ export default function Home() {
           </header>
         </div>
         
-        <div className="flex-1 container mx-auto px-4 pb-8 grid grid-cols-1 lg:grid-cols-5 lg:gap-8 overflow-hidden">
+        <div className="flex-1 container mx-auto px-4 pb-8 grid grid-cols-1 lg:grid-cols-6 lg:gap-8 overflow-hidden">
           <section className="lg:col-span-4 flex flex-col overflow-hidden bg-muted/50 rounded-lg p-4">
               <div className="flex-1 overflow-y-auto pr-4 -mr-4">
                  <SongTimeline songs={songs} sortOrder={sortOrder} setSortOrder={setSortOrder} />
               </div>
           </section>
-          <aside className="lg:col-span-1 overflow-y-auto hidden lg:block bg-muted/50 rounded-lg p-4">
-              <YoutubePlaylist songs={songs} />
+          <aside className="lg:col-span-2 hidden lg:flex flex-col overflow-hidden">
+             <div className="h-[480px] flex flex-col">
+                <YoutubePlaylist songs={songs} />
+             </div>
           </aside>
         </div>
 
@@ -74,6 +76,6 @@ export default function Home() {
           </DialogContent>
         </Dialog>
       </div>
-    </>
+    </div>
   );
 }
