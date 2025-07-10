@@ -25,9 +25,9 @@ export default function Home() {
 
   return (
     <>
-      <main className="min-h-screen bg-background font-body text-foreground">
-        <div className="container mx-auto px-4 py-8">
-          <header className="text-center mb-12">
+      <main className="h-screen max-h-screen bg-background font-body text-foreground flex flex-col overflow-hidden">
+        <div className="container mx-auto px-4 pt-8">
+          <header className="text-center mb-8">
             <div className="inline-flex items-center justify-center gap-4">
               <Heart className="h-10 w-10 text-primary animate-pulse" />
               <h1 className="text-5xl md:text-6xl font-headline font-bold tracking-tight bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
@@ -39,20 +39,24 @@ export default function Home() {
               A daily mixtape of the songs that tell our story.
             </p>
           </header>
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 lg:gap-8">
-            <section className="lg:col-span-2 mb-12">
-              <SongTimeline songs={songs} sortOrder={sortOrder} setSortOrder={setSortOrder} />
-            </section>
-            <aside className="lg:col-span-1">
-               <YoutubePlaylist songs={songs} />
-            </aside>
-          </div>
-
-          <footer className="text-center mt-16 text-sm text-muted-foreground">
-            <p>Made with &hearts; for my one and only.</p>
-          </footer>
         </div>
+        
+        <div className="flex-1 container mx-auto px-4 pb-8 grid grid-cols-1 lg:grid-cols-3 lg:gap-8 overflow-hidden">
+          <section className="lg:col-span-2 flex flex-col overflow-hidden">
+              <div className="flex-1 overflow-y-auto pr-4 -mr-4">
+                 <SongTimeline songs={songs} sortOrder={sortOrder} setSortOrder={setSortOrder} />
+              </div>
+          </section>
+          <aside className="lg:col-span-1 overflow-y-auto hidden lg:block">
+              <YoutubePlaylist songs={songs} />
+          </aside>
+        </div>
+
+        {/* Mobile-only playlist view, since aside is hidden */}
+        <div className="lg:hidden container mx-auto px-4 pb-8">
+            <YoutubePlaylist songs={songs} />
+        </div>
+
       </main>
 
       <div className="fixed bottom-8 right-8 z-50">
