@@ -92,8 +92,8 @@ export function SongTimeline({ songs, sortOrder, setSortOrder }: SongTimelinePro
                     <time dateTime={date}>{format(parseISO(date), "dd MMMM yyyy")}</time>
                  </div>
                </AccordionTrigger>
-               <AccordionContent className="bg-card text-card-foreground rounded-b-lg border border-t-0 shadow-sm p-6 pt-0">
-                  <div className="space-y-6 pt-6 border-t">
+               <AccordionContent className="bg-muted/50 rounded-b-lg border border-t-0 p-4">
+                  <div className="space-y-6">
                     {songs.map((song) => (
                       <SongCard key={song.id} song={song} />
                     ))}

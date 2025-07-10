@@ -3,73 +3,64 @@
 
 import type { Song } from "@/types";
 import { getYoutubeEmbedUrl } from "@/lib/youtube";
-import { format, parseISO } from "date-fns";
-import { Calendar, MessageSquare, Music, Youtube, Mic, Camera, FileText } from "lucide-react";
-import { Separator } from "./ui/separator";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { MessageSquare, Mic, Youtube, FileText } from "lucide-react";
 import Image from "next/image";
 
 export function SongCard({ song }: { song: Song }) {
   const embedUrl = getYoutubeEmbedUrl(song.youtubeUrl);
 
   return (
-    <div className="bg-card text-card-foreground rounded-lg border-none shadow-none p-0 space-y-4">
-      <div className="flex items-center gap-3">
-        <Music className="h-5 w-5 text-muted-foreground" />
-        <span>
-          <i>{song.title} by {song.artist}</i>
-        </span>
-      </div>
-      <Separator />
-
-      {song.message && (
-        <>
-          <div className="flex items-start gap-3">
-            <FileText className="h-5 w-5 text-muted-foreground mt-1" />
-            <p className="italic">"{song.message}"</p>
-          </div>
-          <Separator />
-        </>
-      )}
-
+    <Card className="overflow-hidden">
       {song.photoUrl && (
-        <>
-        <div className="flex items-start gap-3">
-            <Camera className="h-5 w-5 text-muted-foreground" />
-            <div className="relative w-full aspect-video rounded-md overflow-hidden">
-                <Image
-                    src={song.photoUrl}
-                    alt={song.title}
-                    layout="fill"
-                    objectFit="cover"
-                    data-ai-hint="song lovers"
-                />
-            </div>
+        <div className="relative w-full aspect-video">
+          <Image
+            src={song.photoUrl}
+            alt={song.title}
+            fill
+            className="object-cover"
+            data-ai-hint="song lovers"
+          />
         </div>
-        <Separator />
-        </>
       )}
+      <CardHeader>
+        <CardTitle>{song.title}</CardTitle>
+        <CardDescription>by {song.artist}</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {song.message && (
+          <div className="flex items-start gap-4">
+            <MessageSquare className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-1" />
+            <p className="italic text-muted-foreground">"{song.message}"</p>
+          </div>
+        )}
 
-      {embedUrl && (
-          <>
-            <div className="flex items-center gap-3">
-                <Youtube className="h-5 w-5 text-muted-foreground" />
-                <a href={song.youtubeUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                    [YouTube Link]
-                </a>
+        {embedUrl && (
+          <div className="flex items-start gap-4">
+             <Youtube className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-1" />
+            <div className="relative w-full aspect-video rounded-md overflow-hidden">
+              <iframe
+                src={embedUrl}
+                title={song.title}
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="w-full h-full"
+              ></iframe>
             </div>
-            <Separator/>
-          </>
-      )}
+          </div>
+        )}
 
-      {song.lyrics && (
-        <>
-            <div className="flex items-start gap-3">
-                <Mic className="h-5 w-5 text-muted-foreground mt-1" />
-                <p className="whitespace-pre-wrap">{song.lyrics}</p>
+        {song.lyrics && (
+          <div className="flex items-start gap-4">
+            <FileText className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-1" />
+            <div className="space-y-2">
+                <h4 className="font-semibold">Lyrics</h4>
+                <p className="whitespace-pre-wrap text-sm text-muted-foreground">{song.lyrics}</p>
             </div>
-            <Separator />
-        </>
-      )}
-    </div>
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }
