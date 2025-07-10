@@ -90,7 +90,7 @@ export function SongForm({ onSongAdded }: SongFormProps) {
 
 
       if (!searchResult || !searchResult.isAccurate || !searchResult.youtubeUrl) {
-        throw new Error("Could not find an accurate match on YouTube.");
+        throw new Error(searchResult.reason || "Could not find an accurate match on YouTube.");
       }
 
       let photoUrl: string | undefined = undefined;
