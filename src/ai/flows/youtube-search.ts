@@ -31,15 +31,22 @@ const youtubeSearchPrompt = ai.definePrompt({
   name: 'youtubeSearchPrompt',
   input: {schema: YoutubeSearchInputSchema},
   output: {schema: YoutubeSearchOutputSchema},
-  prompt: `You are an AI assistant that searches for songs on YouTube.
+  prompt: `You are an AI assistant that is an expert at finding songs on YouTube.
 
-  Given the song title and artist, find the most relevant YouTube URL and determine if the result is accurate.
+  Your goal is to find the best possible, playable YouTube video for a given song.
 
   Song Title: {{{title}}}
   Artist: {{{artist}}}
 
+  Please prioritize your search in this order:
+  1. The official music video.
+  2. An official "art track" or "audio" version from the artist's channel.
+  3. A high-quality upload from a reputable music channel.
+  
+  Do NOT return a link to a "lyric video" unless it is the only option available. The video must be embeddable.
+
   Return the YouTube URL and a boolean indicating whether the result is accurate.
-  If you cannot find the song, return an empty YouTube URL and set isAccurate to false.`,
+  If you cannot find a suitable song, return an empty YouTube URL and set isAccurate to false.`,
 });
 
 const youtubeSearchFlow = ai.defineFlow(
