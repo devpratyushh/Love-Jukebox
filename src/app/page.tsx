@@ -3,7 +3,7 @@
 
 import { useState } from "react";
 import type { Song } from "@/types";
-import { useLocalStorage } from "@/hooks/use-local-storage";
+import { initialSongs } from "@/lib/static-data";
 import { SongForm } from "@/components/song-form";
 import { SongTimeline } from "@/components/song-timeline";
 import { Button } from "@/components/ui/button";
@@ -15,13 +15,17 @@ import { FlyingHearts } from "@/components/flying-hearts";
 type SortOrder = "newest-first" | "oldest-first";
 
 export default function Home() {
-  const [songs, setSongs] = useLocalStorage<Song[]>("love-jukebox-songs", []);
+  const [songs, setSongs] = useState<Song[]>(initialSongs);
   const [sortOrder, setSortOrder] = useState<SortOrder>("newest-first");
   const [isFormOpen, setIsFormOpen] = useState(false);
 
   const addSong = (newSong: Song) => {
     setSongs([newSong, ...songs]);
     setIsFormOpen(false); // Close dialog on successful submission
+  };
+
+  const deleteSong = (id: string) => {
+    setSongs(songs.filter((song) => song.id !== id));
   };
   
   const sortedSongs = [...songs].sort((a, b) => {
@@ -54,7 +58,7 @@ export default function Home() {
         
         <div className="flex-1 container mx-auto px-4 pb-8 grid grid-cols-1 lg:grid-cols-6 lg:gap-8 overflow-hidden">
           <section className="lg:col-span-4 flex flex-col overflow-hidden bg-muted/50 rounded-lg">
-             <SongTimeline songs={songs} sortOrder={sortOrder} setSortOrder={setSortOrder} />
+             <SongTimeline songs={songs} sortOrder={sortOrder} setSortOrder={setSortOrder} onDeleteSong={deleteSong} />
           </section>
           <aside className="lg:col-span-2 hidden lg:flex flex-col overflow-hidden">
              <div className="flex flex-col h-full">

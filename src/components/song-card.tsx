@@ -5,7 +5,7 @@ import type { Song } from "@/types";
 import { getYoutubeEmbedUrl } from "@/lib/youtube";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { MessageSquare, FileText, Youtube } from "lucide-react";
+import { MessageSquare, FileText, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { Button } from "./ui/button";
 
@@ -21,8 +21,7 @@ const LyricsDisplay = ({ lyrics }: { lyrics: string }) => {
         return null;
     }
     
-    // This logic distinguishes a snippet by looking for a specific structure (context, main, context).
-    const isSnippet = lines.length > 2 && lines.length <= 10; // Heuristic for snippets
+    const isSnippet = lines.length > 2 && lines.length <= 10; 
 
     const prelude = isSnippet ? lines.slice(0, 1) : [];
     const mainSnippet = isSnippet ? lines.slice(1, -1) : lines;
@@ -57,7 +56,7 @@ const LyricsDisplay = ({ lyrics }: { lyrics: string }) => {
 };
 
 
-export function SongCard({ song }: { song: Song }) {
+export function SongCard({ song, onDelete }: { song: Song; onDelete: (id: string) => void; }) {
   const embedUrl = getYoutubeEmbedUrl(song.youtubeUrl, song.start);
 
   return (
@@ -121,11 +120,9 @@ export function SongCard({ song }: { song: Song }) {
           )}
         </CardContent>
         <CardFooter>
-            <Button variant="link" asChild className="p-0 h-auto text-muted-foreground hover:text-primary">
-                <a href={song.youtubeUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
-                    <Youtube className="h-4 w-4" />
-                    Watch on YouTube
-                </a>
+            <Button variant="ghost" size="sm" onClick={() => onDelete(song.id)} className="text-muted-foreground hover:text-destructive">
+                <Trash2 className="h-4 w-4" />
+                <span className="sr-only">Delete Song</span>
             </Button>
         </CardFooter>
       </div>

@@ -28,9 +28,10 @@ interface SongTimelineProps {
   songs: Song[];
   sortOrder: SortOrder;
   setSortOrder: Dispatch<SetStateAction<SortOrder>>;
+  onDeleteSong: (id: string) => void;
 }
 
-export function SongTimeline({ songs, sortOrder, setSortOrder }: SongTimelineProps) {
+export function SongTimeline({ songs, sortOrder, setSortOrder, onDeleteSong }: SongTimelineProps) {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -101,7 +102,7 @@ export function SongTimeline({ songs, sortOrder, setSortOrder }: SongTimelinePro
                 <AccordionContent className="bg-muted/50 rounded-b-lg border border-t-0 p-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {songs.map((song) => (
-                        <SongCard key={song.id} song={song} />
+                        <SongCard key={song.id} song={song} onDelete={onDeleteSong} />
                       ))}
                     </div>
                 </AccordionContent>
