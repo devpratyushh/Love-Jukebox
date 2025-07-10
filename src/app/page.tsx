@@ -23,6 +23,8 @@ export default function Home() {
   const [playlistSortOrder, setPlaylistSortOrder] = useState<PlaylistSortOrder>("newest-first");
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isPlaylistOpen, setIsPlaylistOpen] = useState(false);
+  const [activeSong, setActiveSong] = useState<Song | null>(null);
+
 
   const addSong = (newSong: Song) => {
     setSongs([newSong, ...songs]);
@@ -38,6 +40,10 @@ export default function Home() {
       song.id === id ? { ...song, isFavorite: !song.isFavorite } : song
     ));
   }
+
+  const playSong = (song: Song) => {
+    setActiveSong(song);
+  };
 
   const toggleDateFavorite = (date: string, shouldBeFavorite: boolean) => {
     setSongs(songs.map(song => {
@@ -99,6 +105,7 @@ export default function Home() {
                 setSortOrder={setTimelineSortOrder} 
                 onDeleteSong={deleteSong}
                 onToggleDateFavorite={toggleDateFavorite}
+                onPlaySong={playSong}
               />
           </section>
           <aside className="lg:col-span-2 hidden lg:flex flex-col">
@@ -109,6 +116,8 @@ export default function Home() {
                   sortOrder={playlistSortOrder}
                   setSortOrder={setPlaylistSortOrder}
                   onToggleFavorite={toggleFavorite}
+                  activeSong={activeSong}
+                  setActiveSong={setActiveSong}
                 />
              </div>
           </aside>
@@ -131,6 +140,8 @@ export default function Home() {
                 sortOrder={playlistSortOrder}
                 setSortOrder={setPlaylistSortOrder}
                 onToggleFavorite={toggleFavorite}
+                activeSong={activeSong}
+                setActiveSong={setActiveSong}
               />
           </SheetContent>
         </Sheet>

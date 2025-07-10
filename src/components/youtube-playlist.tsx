@@ -101,22 +101,22 @@ interface YoutubePlaylistProps {
     sortOrder: PlaylistSortOrder;
     setSortOrder: Dispatch<SetStateAction<PlaylistSortOrder>>;
     onToggleFavorite: (id: string) => void;
+    activeSong: Song | null;
+    setActiveSong: (song: Song | null) => void;
 }
 
-export function YoutubePlaylist({ favoriteSongs, otherSongs, sortOrder, setSortOrder, onToggleFavorite }: YoutubePlaylistProps) {
-  const [currentSong, setCurrentSong] = useState<Song | null>(null);
+export function YoutubePlaylist({ favoriteSongs, otherSongs, sortOrder, setSortOrder, onToggleFavorite, activeSong, setActiveSong }: YoutubePlaylistProps) {
   const allSongs = [...favoriteSongs, ...otherSongs];
 
   useEffect(() => {
-    // Set the first song as current when the component loads or songs change
-    if (allSongs.length > 0 && !currentSong) {
-      setCurrentSong(allSongs[0]);
+    // If an active song is set from outside, use it.
+    // Otherwise, default to the first song if nothing is playing.
+    if (activeSong) return;
+
+    if (allSongs.length > 0 && !activeSong) {
+      setActiveSong(allSongs[0]);
     }
-    // If the current song is no longer in the list, clear it
-    if (currentSong && !allSongs.find(s => s.id === currentSong.id)) {
-        setCurrentSong(allSongs[0] || null);
-    }
-  }, [allSongs, currentSong]);
+  }, [allSongs, activeSong, setActiveSong]);
 
 
   if (allSongs.length === 0) {
@@ -148,7 +148,7 @@ export function YoutubePlaylist({ favoriteSongs, otherSongs, sortOrder, setSortO
       </div>
       
       <div className="shrink-0 mb-4">
-        <YoutubePlayer song={currentSong} />
+        <YoutubePlayer song={activeSong} />
       </div>
 
       <div className="flex-1 min-h-0">
@@ -161,14 +161,14 @@ export function YoutubePlaylist({ favoriteSongs, otherSongs, sortOrder, setSortO
                            <h3 className="text-sm font-semibold text-muted-foreground">Favorites</h3>
                         </div>
                         {favoriteSongs.map((song) => (
-                           <SongItem key={`fav-${song.id}`} song={song} currentSong={currentSong} onSelectSong={setCurrentSong} onToggleFavorite={onToggleFavorite} />
+                           <SongItem key={`fav-${song.id}`} song={song} currentSong={activeSong} onSelectSong={setActiveSong} onToggleFavorite={onToggleFavorite} />
                         ))}
                        {otherSongs.length > 0 && <Separator className="my-4" />}
                     </>
                 )}
 
               {otherSongs.map((song) => (
-                 <SongItem key={song.id} song={song} currentSong={currentSong} onSelectSong={setCurrentSong} onToggleFavorite={onToggleFavorite} />
+                 <SongItem key={song.id} song={song} currentSong={activeSong} onSelectSong={setActiveSong} onToggleFavorite={onToggleFavorite} />
               ))}
             </div>
           </ScrollArea>

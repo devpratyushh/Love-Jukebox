@@ -5,7 +5,7 @@ import type { Song } from "@/types";
 import { getYoutubeEmbedUrl } from "@/lib/youtube";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { MessageSquare, FileText, Trash2 } from "lucide-react";
+import { MessageSquare, FileText, Trash2, PlayCircle } from "lucide-react";
 import Image from "next/image";
 import { Button } from "./ui/button";
 
@@ -56,20 +56,33 @@ const LyricsDisplay = ({ lyrics }: { lyrics: string }) => {
 };
 
 
-export function SongCard({ song, onDelete }: { song: Song; onDelete: (id: string) => void; }) {
+export function SongCard({ song, onDelete, onPlay }: { song: Song; onDelete: (id: string) => void; onPlay: (song: Song) => void; }) {
   const embedUrl = getYoutubeEmbedUrl(song.youtubeUrl, song.start);
 
   return (
     <Card className="overflow-hidden flex flex-col">
-      <div className="relative w-full aspect-video bg-muted">
+      <div className="relative w-full aspect-video bg-muted group">
         {song.photoUrl && (
-          <Image
-            src={song.photoUrl}
-            alt={song.title}
-            fill
-            className="object-cover"
-            data-ai-hint="song lovers"
-          />
+          <>
+            <Image
+              src={song.photoUrl}
+              alt={song.title}
+              fill
+              className="object-cover"
+              data-ai-hint="song lovers"
+            />
+            <div className="absolute inset-0 bg-black/30 group-hover:bg-black/50 transition-colors flex items-center justify-center">
+              <Button 
+                variant="ghost"
+                size="icon"
+                className="w-20 h-20 text-white/80 hover:text-white hover:bg-white/20 rounded-full"
+                onClick={() => onPlay(song)}
+                >
+                <PlayCircle className="w-16 h-16" />
+                <span className="sr-only">Play Song</span>
+              </Button>
+            </div>
+          </>
         )}
         
         {!song.photoUrl && embedUrl && (
@@ -81,19 +94,6 @@ export function SongCard({ song, onDelete }: { song: Song; onDelete: (id: string
             allowFullScreen
             className="w-full h-full"
           ></iframe>
-        )}
-
-        {song.photoUrl && embedUrl && (
-            <div className="absolute bottom-2 right-2 z-10" style={{ width: '30%', paddingBottom: '16.875%' /* 16:9 of 30% width */ }}>
-                 <iframe
-                    src={embedUrl}
-                    title={`${song.title} preview`}
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className="absolute top-0 left-0 w-full h-full rounded-md shadow-lg"
-                ></iframe>
-            </div>
         )}
       </div>
 

@@ -32,9 +32,10 @@ interface SongTimelineProps {
   setSortOrder: Dispatch<SetStateAction<SortOrder>>;
   onDeleteSong: (id: string) => void;
   onToggleDateFavorite: (date: string, shouldBeFavorite: boolean) => void;
+  onPlaySong: (song: Song) => void;
 }
 
-export function SongTimeline({ songs, sortOrder, setSortOrder, onDeleteSong, onToggleDateFavorite }: SongTimelineProps) {
+export function SongTimeline({ songs, sortOrder, setSortOrder, onDeleteSong, onToggleDateFavorite, onPlaySong }: SongTimelineProps) {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -121,7 +122,7 @@ export function SongTimeline({ songs, sortOrder, setSortOrder, onDeleteSong, onT
                   <AccordionContent className="bg-muted/50 rounded-b-lg border border-t-0 p-4">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {songs.map((song) => (
-                          <SongCard key={song.id} song={song} onDelete={onDeleteSong} />
+                          <SongCard key={song.id} song={song} onDelete={onDeleteSong} onPlay={onPlaySong} />
                         ))}
                       </div>
                   </AccordionContent>
