@@ -7,6 +7,7 @@ const songsWithThumbnails = (songs: Omit<Song, 'id' | 'thumbnailUrl'>[]): Song[]
         ...song,
         id: `${index + 1}`,
         thumbnailUrl: getYoutubeThumbnailUrl(song.youtubeUrl) ?? undefined,
+        isFavorite: song.isFavorite || false,
     }));
 }
 
@@ -24,6 +25,7 @@ Darling, just dive right in and follow my lead
 Well, I found a girl, beautiful and sweet
 Oh, I never knew you were the someone waiting for me`,
     start: "0:55",
+    isFavorite: true,
   },
   {
     title: "All of Me",
@@ -37,17 +39,19 @@ Loves all of you
 Love your curves and all your edges
 All your perfect imperfections`,
     start: "1:05",
+    isFavorite: false,
   },
   {
     title: "A Thousand Years",
     artist: "Christina Perri",
-    date: "2023-10-27T00:00:00.000Z",
+    date: "2023-10-25T00:00:00.000Z",
     message: "I have loved you for a thousand years, I'll love you for a thousand more.",
     youtubeUrl: "https://www.youtube.com/watch?v=rtOvBOTyX00",
     photoUrl: "https://placehold.co/600x400.png",
     lyrics: `Darling, don't be afraid
 I have loved you for a thousand years
 I'll love you for a thousand more`,
-    start: "1:25"
+    start: "1:25",
+    isFavorite: true,
   }
 ]);

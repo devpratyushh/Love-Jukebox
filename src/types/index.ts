@@ -9,4 +9,5 @@ export type Song = {
   thumbnailUrl?: string;
   lyrics?: string;
   start?: string;
+  isFavorite?: boolean;
 };
